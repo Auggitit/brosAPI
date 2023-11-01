@@ -176,71 +176,106 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
             public string cr { get; set; }
             public string balance { get; set; }
             public string parentname { get; set; }
+            public string fy { get; set; }
         }
 
         public class ballist
         {
-            public string code { get; set; }         
+            public string code { get; set; }
             public string balance { get; set; }
             public string parentname { get; set; }
         }
 
+        // [HttpGet]
+        // [Route("GetTrialBalanceData")]
+        // public IList GetTrialBalanceData()
+        // {
+        //     List<tblist> datas = new List<tblist>();
+        //     tblist data = null;
+        //     List<solist> polist = new List<solist>();
+        //     string con = _context.Database.GetDbConnection().ConnectionString.ToString();
+
+        //     #region
+        //     //string query2 = " select \"mLedgerGroup\".\"groupcode\" code,\"mLedgerGroup\".\"groupname\" name,'0' parent,'' dr,'' cr,'' balance,'0' parentname from public.\"mLedgerGroup\" WHERE length(\"mLedgerGroup\".\"groupcode\")=7 ";
+        //     //NpgsqlDataAdapter da2 = new NpgsqlDataAdapter(query2, con);
+        //     //DataTable dt2 = new DataTable();
+        //     //da2.Fill(dt2);
+        //     //for (int i = 0; i < dt2.Rows.Count; i++)
+        //     //{
+        //     //    data = new tblist()
+        //     //    {
+        //     //        code = dt2.Rows[i][0].ToString(),
+        //     //        name = dt2.Rows[i][1].ToString(),
+        //     //        parent = dt2.Rows[i][2].ToString(),
+        //     //        dr = dt2.Rows[i][3].ToString(),
+        //     //        cr = dt2.Rows[i][4].ToString(),
+        //     //        balance = dt2.Rows[i][5].ToString(),
+        //     //        parentname = dt2.Rows[i][6].ToString(),
+        //     //    };
+        //     //    datas.Add(data);
+        //     //}
+        //     #endregion
+
+        //     string query1 = " select \"mLedgerGroup\".\"groupcode\" code,\"mLedgerGroup\".\"groupname\" name,\"mLedgerGroup\".\"groupunder\" parent,'' dr,'' cr,'' balance,'0' parentname from public.\"mLedgerGroup\" WHERE length(\"mLedgerGroup\".\"groupcode\")=6 ";
+        //     NpgsqlDataAdapter da1 = new NpgsqlDataAdapter(query1, con);
+        //     DataTable dt1 = new DataTable();
+        //     da1.Fill(dt1);
+        //     for (int i = 0; i < dt1.Rows.Count; i++)
+        //     {
+        //         data = new tblist()
+        //         {
+        //             code = dt1.Rows[i][0].ToString(),
+        //             name = dt1.Rows[i][1].ToString(),
+        //             parent = dt1.Rows[i][2].ToString(),
+        //             dr = dt1.Rows[i][3].ToString(),
+        //             cr = dt1.Rows[i][4].ToString(),
+        //             balance = dt1.Rows[i][5].ToString(),
+        //             parentname = dt1.Rows[i][6].ToString(),
+        //         };
+        //         datas.Add(data);
+        //     }
+
+        //     string query = " select code Code,Name,Parent,\r\ncase when sum(dr) is null then 0 else sum(dr) end DR,\r\ncase when sum(cr) is null then 0 else sum(cr) end CR,\r\ncase when sum(dr)-sum(cr) > 0 then\r\ncast((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end) as text)  else \r\ncast(((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end)*-1) as text)  end \r\nBALANCE,b.groupname parentname from trialbalance a \r\nleft outer join public.\"mLedgerGroup\" b on a.parent=b.\"groupcode\" group by code,Name,Parent,fy,b.groupname ";
+        //     NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, con);
+        //     DataTable dt = new DataTable();
+        //     da.Fill(dt);
+        //     for (int i = 0; i < dt.Rows.Count; i++)
+        //     {
+        //         data = new tblist()
+        //         {
+        //             code = dt.Rows[i][0].ToString(),
+        //             name = dt.Rows[i][1].ToString(),
+        //             parent = dt.Rows[i][2].ToString(),
+        //             dr = dt.Rows[i][3].ToString(),
+        //             cr = dt.Rows[i][4].ToString(),
+        //             balance = dt.Rows[i][5].ToString(),
+        //             parentname = dt.Rows[i][6].ToString(),
+        //         };
+        //         datas.Add(data);
+        //     }
+        //     var json = JsonSerializer.Serialize(datas);
+        //     return datas;
+        // }
+
         [HttpGet]
         [Route("GetTrialBalanceData")]
-        public IList GetTrialBalanceData()
+        public IList GetTrialBalanceData(string? fy)
         {
-            List<tblist> datas = new List<tblist>();
-            tblist data = null;            
-            List<solist> polist = new List<solist>();
-            string con = _context.Database.GetDbConnection().ConnectionString.ToString();
-
-            #region
-            //string query2 = " select \"mLedgerGroup\".\"groupcode\" code,\"mLedgerGroup\".\"groupname\" name,'0' parent,'' dr,'' cr,'' balance,'0' parentname from public.\"mLedgerGroup\" WHERE length(\"mLedgerGroup\".\"groupcode\")=7 ";
-            //NpgsqlDataAdapter da2 = new NpgsqlDataAdapter(query2, con);
-            //DataTable dt2 = new DataTable();
-            //da2.Fill(dt2);
-            //for (int i = 0; i < dt2.Rows.Count; i++)
-            //{
-            //    data = new tblist()
-            //    {
-            //        code = dt2.Rows[i][0].ToString(),
-            //        name = dt2.Rows[i][1].ToString(),
-            //        parent = dt2.Rows[i][2].ToString(),
-            //        dr = dt2.Rows[i][3].ToString(),
-            //        cr = dt2.Rows[i][4].ToString(),
-            //        balance = dt2.Rows[i][5].ToString(),
-            //        parentname = dt2.Rows[i][6].ToString(),
-            //    };
-            //    datas.Add(data);
-            //}
-            #endregion
-
-            string query1 = " select \"mLedgerGroup\".\"groupcode\" code,\"mLedgerGroup\".\"groupname\" name,\"mLedgerGroup\".\"groupunder\" parent,'' dr,'' cr,'' balance,'0' parentname from public.\"mLedgerGroup\" WHERE length(\"mLedgerGroup\".\"groupcode\")=6 ";
-            NpgsqlDataAdapter da1 = new NpgsqlDataAdapter(query1, con);
-            DataTable dt1 = new DataTable();
-            da1.Fill(dt1);
-            for (int i = 0; i < dt1.Rows.Count; i++)
+            if (!string.IsNullOrEmpty(fy))
             {
-                data = new tblist()
-                {
-                    code = dt1.Rows[i][0].ToString(),
-                    name = dt1.Rows[i][1].ToString(),
-                    parent = dt1.Rows[i][2].ToString(),
-                    dr = dt1.Rows[i][3].ToString(),
-                    cr = dt1.Rows[i][4].ToString(),
-                    balance = dt1.Rows[i][5].ToString(),
-                    parentname = dt1.Rows[i][6].ToString(),
-                };
-                datas.Add(data);
+                fy = $" AND fy = '{fy}'";
             }
 
-            string query = " select code Code,Name,Parent,\r\ncase when sum(dr) is null then 0 else sum(dr) end DR,\r\ncase when sum(cr) is null then 0 else sum(cr) end CR,\r\ncase when sum(dr)-sum(cr) > 0 then\r\ncast((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end) as text)  else \r\ncast(((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end)*-1) as text)  end \r\nBALANCE,b.groupname parentname from trialbalance a \r\nleft outer join public.\"mLedgerGroup\" b on a.parent=b.\"groupcode\" group by code,Name,Parent,fy,b.groupname ";
+            List<tblist> datas = new List<tblist>();
+            string con = _context.Database.GetDbConnection().ConnectionString.ToString();
+
+            string query = $" select code Code,Name,Parent,\r\ncase when sum(dr) is null then 0 else sum(dr) end DR,\r\ncase when sum(cr) is null then 0 else sum(cr) end CR,\r\ncase when sum(dr)-sum(cr) > 0 then\r\ncast((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end) as text)  else \r\ncast(((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end)*-1) as text)  end \r\nBALANCE,b.groupname parentname, fy from trialbalance a \r\nleft outer join public.\"mLedgerGroup\" b on a.parent=b.\"groupcode\" where 1=1 {fy} group by code,Name,Parent,fy,b.groupname ";
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, con);
             DataTable dt = new DataTable();
             da.Fill(dt);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                data = new tblist()
+                var data = new tblist()
                 {
                     code = dt.Rows[i][0].ToString(),
                     name = dt.Rows[i][1].ToString(),
@@ -249,10 +284,10 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                     cr = dt.Rows[i][4].ToString(),
                     balance = dt.Rows[i][5].ToString(),
                     parentname = dt.Rows[i][6].ToString(),
+                    fy = dt.Rows[i][7].ToString(),
                 };
                 datas.Add(data);
             }
-            var json = JsonSerializer.Serialize(datas);
             return datas;
         }
 
@@ -261,8 +296,8 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
         public JsonResult GetBalanceSheetData()
         {
             List<ballist> liblist = new List<ballist>();
-            ballist lib = null;            
-            string con = _context.Database.GetDbConnection().ConnectionString.ToString();           
+            ballist lib = null;
+            string con = _context.Database.GetDbConnection().ConnectionString.ToString();
 
             //Liability            
             string queryLib = " select sum(dr)-sum(cr) amount,b.groupunder,c.\"groupname\" from trialbalance a \r\nleft outer join public.\"mLedgerGroup\" b on a.parent=b.\"groupcode\"\r\nleft outer join public.\"mLedgerGroup\" c on b.\"groupunder\" = c.groupcode\r\nwhere b.\"groupunder\" in \r\n(select groupcode from public.\"mLedgerGroup\" where \"groupunder\"='PLG0002')  group by b.groupunder,c.\"groupname\" ";
@@ -275,7 +310,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 if (double.Parse(amt) < 0) { amt = (double.Parse(amt) * -1).ToString("0.00"); }
                 lib = new ballist()
                 {
-                    code = dt.Rows[i][1].ToString(),                  
+                    code = dt.Rows[i][1].ToString(),
                     balance = amt,
                     parentname = dt.Rows[i][2].ToString(),
                 };
@@ -287,7 +322,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
             if (profitValue < 0) { profitValue = (profitValue * -1); }
             lib = new ballist()
             {
-                code = "profit",               
+                code = "profit",
                 balance = profitValue.ToString("0.00"),
                 parentname = "Profit & Loss A/C",
             };
@@ -307,7 +342,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 if (double.Parse(amt) < 0) { amt = (double.Parse(amt) * -1).ToString("0.00"); }
                 ass = new ballist()
                 {
-                    code = dtA.Rows[i][1].ToString(),                  
+                    code = dtA.Rows[i][1].ToString(),
                     balance = amt,
                     parentname = dtA.Rows[i][2].ToString(),
                 };
@@ -330,11 +365,11 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
 
                 ass = new ballist()
                 {
-                    code = acccode,                  
+                    code = acccode,
                     balance = amount,
                     parentname = acc,
                 };
-                asslist.Add(ass);               
+                asslist.Add(ass);
             }
 
             var response = new
@@ -692,8 +727,8 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 netP = JsonConvert.SerializeObject(netP),
                 netS = JsonConvert.SerializeObject(netS),
             };
-            
-            return netProfit;                     
+
+            return netProfit;
         }
 
 
@@ -722,9 +757,9 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 DataRow dr = p.NewRow();
                 dr[0] = "0";
                 dr[1] = "Opening Stock";
-                dr[2] = 0;                
+                dr[2] = 0;
                 p.Rows.Add(dr);
-            }           
+            }
 
             //Purchase
             string PurchaseQuery = "select b.\"CompanyDisplayName\",a.acccode,round(sum(dr)-sum(cr),2) from accountentry a "
@@ -732,19 +767,19 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
             + " where cast(a.acccode as int) in (select b.\"LedgerCode\" from public.\"mLedgers\" b "
             + " where b.\"GroupCode\"='LG0025')\r\ngroup by  b.\"CompanyDisplayName\",a.acccode";
             DataTable purchaseTable = new DataTable();
-            NpgsqlDataAdapter daPurchase = new NpgsqlDataAdapter(PurchaseQuery,con);
+            NpgsqlDataAdapter daPurchase = new NpgsqlDataAdapter(PurchaseQuery, con);
             daPurchase.Fill(purchaseTable);
             if (purchaseTable.Rows.Count > 0)
             {
                 string acc = purchaseTable.Rows[0][0].ToString();
                 string acccode = purchaseTable.Rows[0][1].ToString();
                 string amount = purchaseTable.Rows[0][2].ToString();
-                if (string.IsNullOrEmpty(amount)){ amount = "0"; }
+                if (string.IsNullOrEmpty(amount)) { amount = "0"; }
                 if (double.Parse(amount) < 0) { amount = (double.Parse(amount) * -1).ToString(); }
                 DataRow dr = p.NewRow();
                 dr[0] = acccode;
                 dr[1] = acc;
-                dr[2] = amount;                
+                dr[2] = amount;
                 p.Rows.Add(dr);
             }
 
@@ -766,7 +801,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 DataRow dr = p.NewRow();
                 dr[0] = acccode;
                 dr[1] = acc;
-                dr[2] = amount;                
+                dr[2] = amount;
                 p.Rows.Add(dr);
             }
 
@@ -790,7 +825,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 DataRow dr = s.NewRow();
                 dr[0] = acccode;
                 dr[1] = acc;
-                dr[2] = amount;                
+                dr[2] = amount;
                 s.Rows.Add(dr);
             }
 
@@ -813,13 +848,13 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 DataRow dr = s.NewRow();
                 dr[0] = acccode;
                 dr[1] = acc;
-                dr[2] = amount;                
+                dr[2] = amount;
                 s.Rows.Add(dr);
-            }            
+            }
 
             //Closing Stock
             string clsStockQuery = "select case when sum(inqty) = 0 then 0 else round(round(sum(inamount) / sum(inqty),2) "
-                +" \r\n* sum(inqty)-sum(outqty),2) end as stockvalue from stockview_data";
+                + " \r\n* sum(inqty)-sum(outqty),2) end as stockvalue from stockview_data";
             DataTable clsStockTable = new DataTable();
             NpgsqlDataAdapter daClsStock = new NpgsqlDataAdapter(clsStockQuery, con);
             daClsStock.Fill(clsStockTable);
@@ -833,13 +868,13 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 DataRow dr = s.NewRow();
                 dr[0] = acccode;
                 dr[1] = acc;
-                dr[2] = amount;                
+                dr[2] = amount;
                 s.Rows.Add(dr);
             }
 
             double pTotal = 0;
             double sTotal = 0;
-            for (int i = 0; i< p.Rows.Count; i++)
+            for (int i = 0; i < p.Rows.Count; i++)
             {
                 pTotal = pTotal + double.Parse(p.Rows[i][2].ToString());
             }
@@ -849,19 +884,19 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
             }
 
             var profitOrLoss = 0.00;
-            if(pTotal > sTotal)
+            if (pTotal > sTotal)
             {
                 profitOrLoss = pTotal - sTotal;
                 DataRow dr = p.NewRow();
                 dr[0] = "";
                 dr[1] = "";
-                dr[2] = "";                
+                dr[2] = "";
                 p.Rows.Add(dr);
 
                 DataRow dr1 = s.NewRow();
                 dr1[0] = "0";
                 dr1[1] = "Gross Loss ";
-                dr1[2] = profitOrLoss.ToString("0.00");                
+                dr1[2] = profitOrLoss.ToString("0.00");
                 s.Rows.Add(dr1);
             }
             else
@@ -870,13 +905,13 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 DataRow dr = p.NewRow();
                 dr[0] = "0";
                 dr[1] = "Gross Profit ";
-                dr[2] = profitOrLoss.ToString("0.00");               
+                dr[2] = profitOrLoss.ToString("0.00");
                 p.Rows.Add(dr);
 
                 DataRow dr1 = s.NewRow();
                 dr1[0] = "";
                 dr1[1] = "";
-                dr1[2] = "";                
+                dr1[2] = "";
                 s.Rows.Add(dr1);
             }
 
@@ -898,16 +933,16 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 DataRow dr = pProf.NewRow();
                 dr[0] = "";
                 dr[1] = "Gross Loss Carried Forward";
-                dr[2] = profitOrLoss.ToString("0.00");              
-                pProf.Rows.Add(dr);             
+                dr[2] = profitOrLoss.ToString("0.00");
+                pProf.Rows.Add(dr);
             }
             else
             {
-                profitOrLoss = sTotal - pTotal;               
+                profitOrLoss = sTotal - pTotal;
                 DataRow dr1 = sProf.NewRow();
                 dr1[0] = "";
                 dr1[1] = "Gross Profit Carried Forward";
-                dr1[2] = profitOrLoss.ToString("0.00");                
+                dr1[2] = profitOrLoss.ToString("0.00");
                 sProf.Rows.Add(dr1);
             }
 
@@ -941,7 +976,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 dr[0] = "";
                 dr[1] = "Indirect Expenses";
                 dr[2] = "0";
-                pProf.Rows.Add(dr);          
+                pProf.Rows.Add(dr);
             }
 
             //Indirect Income
@@ -974,7 +1009,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 dr[0] = "";
                 dr[1] = "Indirect Income";
                 dr[2] = "0";
-                sProf.Rows.Add(dr);               
+                sProf.Rows.Add(dr);
             }
 
 
@@ -1003,7 +1038,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 nsTotal = nsTotal + double.Parse(sProf.Rows[j][2].ToString());
             }
             netProfit = npTotal - nsTotal;
-            if(netProfit > 0)
+            if (netProfit > 0)
             {
                 DataRow drp = netP.NewRow();
                 drp[0] = "";
@@ -1029,9 +1064,9 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 drs[0] = "";
                 drs[1] = "";
                 drs[2] = "";
-                netS.Rows.Add(drs);               
+                netS.Rows.Add(drs);
             }
-                      
+
 
             var response = new
             {
@@ -1043,19 +1078,19 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 netS = JsonConvert.SerializeObject(netS),
             };
 
-            return new JsonResult(response);            
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("GetVendorOverdue")]
-        public JsonResult GetVendorOverdue(string branch,string fy,string ledger)
-        {           
+        public JsonResult GetVendorOverdue(string branch, string fy, string ledger)
+        {
             string con = _context.Database.GetDbConnection().ConnectionString.ToString();
             string query = "select \r\nb.\"CompanyDisplayName\" vendorName,\r\na.ledgercode vendorcode,\r\na.vchdate vchDate,a.vchno  " +
-            " ,\r\nsum(a.amount) vchValue,\r\nsum(a.received) paidValue,\r\nsum(a.amount)-(sum(a.received) +sum(a.returned)) balanceValue, "+
+            " ,\r\nsum(a.amount) vchValue,\r\nsum(a.received) paidValue,\r\nsum(a.amount)-(sum(a.received) +sum(a.returned)) balanceValue, " +
             " \r\ndueon Dueon,a.dueon - a.vchdate AS duedays\r\nfrom \r\noverdueentry a  \r\nleft outer join \"mLedgers\" " +
-            " b on a.ledgercode = cast(b.\"LedgerCode\" as text) \r\nleft outer join \"vGrn\" c on a.vchno= c.grnno\r\n "+
-            " where a.branch='"+branch+"' and a.fy='"+ fy + "' and a.ledgercode='"+ledger+ "' and entrytype='VENDOR_OVERDUE' " +
+            " b on a.ledgercode = cast(b.\"LedgerCode\" as text) \r\nleft outer join \"vGrn\" c on a.vchno= c.grnno\r\n " +
+            " where a.branch='" + branch + "' and a.fy='" + fy + "' and a.ledgercode='" + ledger + "' and entrytype='VENDOR_OVERDUE' " +
             " \r\ngroup by b.\"CompanyDisplayName\",dueon,a.vchdate,a.ledgercode,a.vchno order by a.vchdate ";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
@@ -1077,7 +1112,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
         [HttpGet]
         [Route("GetAllVendorOverdue")]
         public JsonResult GetAllVendorOverdue(string branch, string fy)
-        {         
+        {
             string con = _context.Database.GetDbConnection().ConnectionString.ToString();
             string query = "select \r\nb.\"CompanyDisplayName\" vendorName,\r\na.ledgercode vendorcode,\r\na.vchdate vchDate,a.vchno  " +
             " ,\r\nsum(a.amount) vchValue,\r\nsum(a.received) paidValue,\r\nsum(a.amount)-(sum(a.received) +sum(a.returned)) balanceValue, " +
@@ -1133,7 +1168,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
         [HttpGet]
         [Route("GetAllCustomerOverdue")]
         public JsonResult GetAllCustomerOverdue(string branch, string fy)
-        {           
+        {
             string con = _context.Database.GetDbConnection().ConnectionString.ToString();
             string query = "select \r\nb.\"CompanyDisplayName\" vendorName,\r\na.ledgercode vendorcode,\r\na.vchdate vchDate,a.vchno  " +
             " ,\r\nsum(a.amount) vchValue,\r\nsum(a.received) paidValue,\r\nsum(a.amount)-(sum(a.received) +sum(a.returned)) balanceValue, " +
