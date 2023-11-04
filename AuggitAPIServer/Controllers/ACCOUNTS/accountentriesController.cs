@@ -1214,5 +1214,22 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
             //var json = JsonConvert.SerializeObject(table);
             return new JsonResult(JsonConvert.SerializeObject(table));
         }
+
+        [HttpGet]
+        [Route("getfy")]
+        public JsonResult getFinancialYearCode(string date)
+        {
+            DateTime utcDateTime = DateTime.SpecifyKind(DateTime.Parse(date), DateTimeKind.Utc);
+
+            var fy = _context.FinancialYears
+                        .Where(x => x.DateFrom <= utcDateTime && x.DateTo > utcDateTime)
+                        .Select(x => x.Fy)
+                        .FirstOrDefault();
+
+            return new JsonResult(new
+            {
+                fycode = string.IsNullOrEmpty(fy) ? "Not Found" : fy
+            });
+        }
     }
 }

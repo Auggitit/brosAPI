@@ -78,11 +78,11 @@ namespace AuggitAPIServer.Controllers.ORDER
             rtnData.Pending = rtnData.Result
                 .Count(x =>
                     (string.IsNullOrEmpty(x.ordered) ? 0 : Math.Round(double.Parse(x.ordered))) -
-                    Math.Round(double.Parse(x.received)) > 0);
+                    (string.IsNullOrEmpty(x.received) ? 0 : Math.Round(double.Parse(x.received))) > 0);
             rtnData.Completed = rtnData.Result
                 .Count(x =>
                     (string.IsNullOrEmpty(x.ordered) ? 0 : Math.Round(double.Parse(x.ordered))) -
-                    Math.Round(double.Parse(x.received)) <= 0);
+                    (string.IsNullOrEmpty(x.received) ? 0 : Math.Round(double.Parse(x.received))) <= 0);
             rtnData.Cancelled = byte.MinValue;
 
             rtnData.PendingPercent = !double.IsNaN((double)rtnData.Pending / rtnData.Total * 100)
