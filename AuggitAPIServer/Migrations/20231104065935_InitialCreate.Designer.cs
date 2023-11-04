@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AuggitAPIServer.Migrations
 {
     [DbContext(typeof(AuggitAPIServerContext))]
-    [Migration("20230920150144_testtwo")]
-    partial class testtwo
+    [Migration("20231104065935_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,6 +65,12 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("hsn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("paytype")
+                        .HasColumnType("text");
+
+                    b.Property<string>("remarks")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("vchdate")
@@ -251,10 +257,16 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("paymode")
                         .HasColumnType("text");
 
+                    b.Property<string>("paytype")
+                        .HasColumnType("text");
+
                     b.Property<string>("refdate")
                         .HasColumnType("text");
 
                     b.Property<string>("refno")
+                        .HasColumnType("text");
+
+                    b.Property<string>("remarks")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("vchdate")

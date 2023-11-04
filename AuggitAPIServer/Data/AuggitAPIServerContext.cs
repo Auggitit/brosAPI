@@ -17,12 +17,13 @@ using AuggitAPIServer.Model.DRNOTE;
 using AuggitAPIServer.Model.STOCKJOURNAL;
 using AuggitAPIServer.Model.DYFIELD;
 using AuggitAPIServer.Model.ProductionConsumption;
+using AuggitAPIServer.Model.FinancialYear;
 
 namespace AuggitAPIServer.Data
 {
     public class AuggitAPIServerContext : DbContext
     {
-        public AuggitAPIServerContext (DbContextOptions<AuggitAPIServerContext> options)
+        public AuggitAPIServerContext(DbContextOptions<AuggitAPIServerContext> options)
             : base(options)
         {
         }
@@ -163,5 +164,6 @@ namespace AuggitAPIServer.Data
         public DbSet<ProductionDetails>? ProDetails { get; set; }
         public DbSet<ConsumptionDetails>? ConsDetails { get; set; }
         public DbSet<ProductionConsumption>? ProCon { get; set; }
+        public DbSet<FinancialYear> FinancialYears { get; set; }
     }
 }

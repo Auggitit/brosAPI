@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AuggitAPIServer.Migrations
 {
     [DbContext(typeof(AuggitAPIServerContext))]
-    [Migration("20230907143649_changepouom")]
-    partial class changepouom
+    [Migration("20231104071504_AddedFinancialYearsTable")]
+    partial class AddedFinancialYearsTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,6 +65,12 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("hsn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("paytype")
+                        .HasColumnType("text");
+
+                    b.Property<string>("remarks")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("vchdate")
@@ -251,10 +257,16 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("paymode")
                         .HasColumnType("text");
 
+                    b.Property<string>("paytype")
+                        .HasColumnType("text");
+
                     b.Property<string>("refdate")
                         .HasColumnType("text");
 
                     b.Property<string>("refno")
+                        .HasColumnType("text");
+
+                    b.Property<string>("remarks")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("vchdate")
@@ -433,6 +445,10 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("uom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("uomcode")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -620,6 +636,10 @@ namespace AuggitAPIServer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("uomcode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("vchcreateddate")
                         .HasColumnType("timestamp with time zone");
 
@@ -683,6 +703,31 @@ namespace AuggitAPIServer.Migrations
                     b.HasKey("id");
 
                     b.ToTable("sdef");
+                });
+
+            modelBuilder.Entity("AuggitAPIServer.Model.FinancialYear.FinancialYear", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DateFrom")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateTo")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Fy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FinancialYears");
                 });
 
             modelBuilder.Entity("AuggitAPIServer.Model.GRN.vGrn", b =>
@@ -959,6 +1004,12 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("transport")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("uom")
+                        .HasColumnType("text");
+
+                    b.Property<string>("uomcode")
+                        .HasColumnType("text");
 
                     b.Property<string>("vchtype")
                         .IsRequired()
@@ -1248,6 +1299,12 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("transport")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("uom")
+                        .HasColumnType("text");
+
+                    b.Property<string>("uomcode")
+                        .HasColumnType("text");
 
                     b.Property<string>("vchtype")
                         .IsRequired()
@@ -2322,10 +2379,6 @@ namespace AuggitAPIServer.Migrations
                     b.Property<decimal>("qty")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("qtymt")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<decimal>("rate")
                         .HasColumnType("numeric");
 
@@ -2342,7 +2395,9 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("uom")
-                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("uomcode")
                         .HasColumnType("text");
 
                     b.Property<string>("vendorcode")
@@ -2533,10 +2588,6 @@ namespace AuggitAPIServer.Migrations
                     b.Property<decimal>("qty")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("qtymt")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<decimal>("rate")
                         .HasColumnType("numeric");
 
@@ -2553,7 +2604,9 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("uom")
-                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("uomcode")
                         .HasColumnType("text");
 
                     b.Property<string>("vendorcode")
@@ -2946,10 +2999,6 @@ namespace AuggitAPIServer.Migrations
                     b.Property<decimal>("qty")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("qtymt")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<decimal>("rate")
                         .HasColumnType("numeric");
 
@@ -2971,6 +3020,14 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("transport")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("uom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("uomcode")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("vtype")
                         .IsRequired()
@@ -3233,10 +3290,6 @@ namespace AuggitAPIServer.Migrations
                     b.Property<decimal>("qty")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("qtymt")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<decimal>("rate")
                         .HasColumnType("numeric");
 
@@ -3258,6 +3311,14 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("transport")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("uom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("uomcode")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("vtype")
                         .IsRequired()
@@ -3647,9 +3708,6 @@ namespace AuggitAPIServer.Migrations
                     b.Property<decimal>("qty")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("qtymt")
-                        .HasColumnType("numeric");
-
                     b.Property<decimal>("rate")
                         .HasColumnType("numeric");
 
@@ -3675,6 +3733,14 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("transport")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("uom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("uomcode")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -3864,9 +3930,6 @@ namespace AuggitAPIServer.Migrations
                     b.Property<decimal>("qty")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("qtymt")
-                        .HasColumnType("numeric");
-
                     b.Property<decimal>("rate")
                         .HasColumnType("numeric");
 
@@ -3892,6 +3955,14 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("transport")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("uom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("uomcode")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

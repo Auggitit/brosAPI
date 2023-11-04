@@ -703,6 +703,31 @@ namespace AuggitAPIServer.Migrations
                     b.ToTable("sdef");
                 });
 
+            modelBuilder.Entity("AuggitAPIServer.Model.FinancialYear.FinancialYear", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DateFrom")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateTo")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Fy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FinancialYears");
+                });
+
             modelBuilder.Entity("AuggitAPIServer.Model.GRN.vGrn", b =>
                 {
                     b.Property<Guid>("Id")
