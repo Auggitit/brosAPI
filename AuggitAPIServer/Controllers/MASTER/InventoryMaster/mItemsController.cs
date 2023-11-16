@@ -125,7 +125,7 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         public JsonResult getItems()
         {
             string query = "SELECT a.\"Id\", a.itemcode, a.itemname, a.itemsku, a.itemhsn, a.gst, a.cess, a.vat, a.\"typeofSupply\", " +
-                      "b.groupname, a.itemunder AS groupcode, c.catname, a.itemcategory AS catcode, d.uomname uom, a.uom AS uomcode " +
+                      "b.groupname, a.itemunder AS groupcode, c.catname, a.itemcategory AS catcode, d.uomname uom, a.uom AS uomcode , a.RStatus" +
                       "FROM public.\"mItem\" a " +
                       "LEFT OUTER JOIN public.\"mItemgroup\" b ON a.itemunder = b.groupcode " +
                       "LEFT OUTER JOIN public.\"mCategory\" c ON a.itemcategory = c.catcode " +
@@ -151,7 +151,7 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
             string jsonResult = JsonConvert.SerializeObject(table);
             return new JsonResult(jsonResult); // Assuming you want to return HTTP 200 OK
         }
-    
+
 
         [HttpGet]
         [Route("getItemsWitQuery")]
@@ -170,7 +170,7 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
                     myReader.Close();
                     myCon.Close();
                 }
-            }            
+            }
             return new JsonResult(JsonConvert.SerializeObject(table));
         }
 
