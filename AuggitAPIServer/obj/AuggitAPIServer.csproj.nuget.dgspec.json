@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\A-BROS IT\\AUGGIT\\AuggitAPIServer\\AuggitAPIServer\\AuggitAPIServer.csproj": {}
+    "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj": {}
   },
   "projects": {
-    "C:\\A-BROS IT\\AUGGIT\\AuggitAPIServer\\AuggitAPIServer\\AuggitAPIServer.csproj": {
+    "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\A-BROS IT\\AUGGIT\\AuggitAPIServer\\AuggitAPIServer\\AuggitAPIServer.csproj",
+        "projectUniqueName": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
         "projectName": "AuggitAPIServer",
-        "projectPath": "C:\\A-BROS IT\\AUGGIT\\AuggitAPIServer\\AuggitAPIServer\\AuggitAPIServer.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\A-BROS IT\\AUGGIT\\AuggitAPIServer\\AuggitAPIServer\\obj\\",
+        "projectPath": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
+        "packagesPath": "C:\\Users\\chand\\.nuget\\packages\\",
+        "outputPath": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\chand\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -65,6 +63,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
+            },
+            "Swashbuckle.AspNetCore.Swagger": {
+              "target": "Package",
+              "version": "[6.5.0, )"
             }
           },
           "imports": [
@@ -78,6 +80,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[6.0.22, 6.0.22]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[6.0.22, 6.0.22]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.22, 6.0.22]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[6.0.22, 6.0.22]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"

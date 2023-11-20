@@ -14,6 +14,7 @@ using Npgsql;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using AuggitAPIServer.Model.MASTER.InventoryMaster;
 using AuggitAPIServer.Model.MASTER.AccountMaster;
+using Internal;
 
 namespace AuggitAPIServer.Controllers.Master.InventoryMaster
 {
@@ -125,13 +126,13 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         public JsonResult getItems()
         {
             string query = "SELECT a.\"Id\", a.itemcode, a.itemname, a.itemsku, a.itemhsn, a.gst, a.cess, a.vat, a.\"typeofSupply\", " +
-                      "b.groupname, a.itemunder AS groupcode, c.catname, a.itemcategory AS catcode, d.uomname uom, a.uom AS uomcode , a.RStatus" +
-                      "FROM public.\"mItem\" a " +
-                      "LEFT OUTER JOIN public.\"mItemgroup\" b ON a.itemunder = b.groupcode " +
-                      "LEFT OUTER JOIN public.\"mCategory\" c ON a.itemcategory = c.catcode " +
-                      "LEFT OUTER JOIN public.\"mUom\" d ON a.uom = d.uomcode " +
-                      "WHERE a.\"RStatus\" = 'A'";
-
+                                  "b.groupname, a.itemunder AS groupcode, c.catname, a.itemcategory AS catcode, d.uomname uom, a.uom AS uomcode " +
+                                  "FROM public.\"mItem\" a " +
+                                  "JOIN public.\"mItemgroup\" b ON a.itemunder = b.groupcode " +
+                                  "JOIN public.\"mCategory\" c ON a.itemcategory = c.catcode " +
+                                  "JOIN public.\"mUom\" d ON a.uom = d.uomcode " +
+                                  "WHERE a.\"RStatus\" = 'A' GROUP BY a.\"Id\",a.itemcode,b.groupname,c.catname,d.uomname";
+Console.WriteLine(query);
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
 
