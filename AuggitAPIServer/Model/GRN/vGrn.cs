@@ -4,13 +4,13 @@
     {
         public Guid Id { get; set; }
 
-        public int grnid { get; set; }  
+        public int grnid { get; set; }
         public string grnno { get; set; }
         public DateTime grndate { get; set; }
         public string? pono { get; set; }
         public DateTime podate { get; set; }
         public string? refno { get; set; }
-        public string? accountname { get;set; }
+        public string? accountname { get; set; }
         public string? vendorcode { get; set; }
         public string? vendorname { get; set; }
         public string? vinvno { get; set; }
@@ -46,5 +46,7 @@
         public string vchtype { get; set; }
         public string saleaccount { get; set; }
         public string deliveryaddress { get; set; }
+        public string? contactpersonname { get; set; }
+        public string? phone { get; set; }
     }
 }

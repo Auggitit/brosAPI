@@ -38,5 +38,7 @@
         public decimal closingValue { get; set; }
         public string salerefname { get; set; }
         public string deliveryaddress { get; set; }
+        public string? contactpersonname { get; set; }
+        public string? phone { get; set; }
     }
 }

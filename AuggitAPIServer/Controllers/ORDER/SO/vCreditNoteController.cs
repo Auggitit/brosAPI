@@ -93,7 +93,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getCN")]
         public JsonResult GetCN(string id)
         {
-            string query = $"SELECT s.vchno,s.vchdate,s.refno,s.salesbillno,s.customercode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgsttotal\",s.\"sgsttotal\",s.\"igsttotal\",s.\"net\",v.\"ContactPersonName\",v.\"ContactPhone\" FROM public.\"vCR\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vCRDetails\" sd ON s.vchno = sd.vchno WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.vchno,s.vchdate,s.refno,s.salesbillno,s.customercode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgsttotal\",s.\"sgsttotal\",s.\"igsttotal\",s.\"net\",s.contactpersonname,s.phoneno FROM public.\"vCR\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vCRDetails\" sd ON s.vchno = sd.vchno WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 

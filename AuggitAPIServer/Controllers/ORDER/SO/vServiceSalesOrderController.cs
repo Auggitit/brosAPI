@@ -95,7 +95,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getSSO")]
         public JsonResult GetSSO(string id)
         {
-            string query = $"SELECT s.sono,s.sodate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,v.\"ContactPersonName\",v.\"ContactPhone\" FROM public.\"vSSO\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSSODetails\" sd ON s.sono = sd.sono WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.sono,s.sodate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno FROM public.\"vSSO\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSSODetails\" sd ON s.sono = sd.sono WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 

@@ -26,7 +26,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 queryCon = Common.QueryFilter(ledgerId, string.Empty, fromDate, toDate, globalFilterId, "vendorcode", "vchdate");
             }
 
-            string query = $"select a.vchno,a.vchdate,a.refno,a.purchasebillno,m.\"CompanyDisplayName\" ,a.vendorcode, sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.drid,a.\"cgsttotal\",a.\"sgsttotal\",a.\"igsttotal\",a.\"net\",a.\"vchcreateddate\",m.\"ContactPersonName\",m.\"ContactPhone\" from public.\"vDR\" a left outer join \"vDRDetails\" b on a.vchno=b.vchno\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.vchno,a.vchdate,a.refno,m.\"CompanyDisplayName\",a.purchasebillno,a.vendorcode,a.\"Id\",a.drid,m.\"ContactPersonName\",m.\"ContactPhone\"";
+            string query = $"select a.vchno,a.vchdate,a.refno,a.purchasebillno,m.\"CompanyDisplayName\" ,a.vendorcode, sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.drid,a.\"cgsttotal\",a.\"sgsttotal\",a.\"igsttotal\",a.\"net\",a.\"vchcreateddate\",a.\"ContactPersonName\",a.\"ContactPhone\" from public.\"vDR\" a left outer join \"vDRDetails\" b on a.vchno=b.vchno\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.vchno,a.vchdate,a.refno,m.\"CompanyDisplayName\",a.purchasebillno,a.vendorcode,a.\"Id\",a.drid,m.\"ContactPersonName\",m.\"ContactPhone\"";
 
             string productsQuery = " select productcode,product,sku,hsn,godown,sum(qty) ordered,0 as received " +
             " ,sum(qty) pqty,rate,disc,gst \r\nfrom \"vDRDetails\" " +
@@ -93,7 +93,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getDN")]
         public JsonResult GetDN(string id)
         {
-            string query = $"SELECT s.vchno,s.vchdate,s.refno,s.purchasebillno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgsttotal\",s.\"sgsttotal\",s.\"igsttotal\",s.\"net\",v.\"ContactPersonName\",v.\"ContactPhone\" FROM public.\"vDR\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vDRDetails\" sd ON s.vchno = sd.vchno WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.vchno,s.vchdate,s.refno,s.purchasebillno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgsttotal\",s.\"sgsttotal\",s.\"igsttotal\",s.\"net\",s.contactpersonname,s.phoneno FROM public.\"vDR\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vDRDetails\" sd ON s.vchno = sd.vchno WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 

@@ -95,7 +95,7 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
         [Route("getPO")]
         public JsonResult GetPO(string id)
         {
-            string query = $"SELECT s.pono,s.podate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,v.\"ContactPersonName\",v.\"ContactPhone\" FROM public.\"vPO\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vPODetails\" sd ON s.pono = sd.pono WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.pono,s.podate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno FROM public.\"vPO\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vPODetails\" sd ON s.pono = sd.pono WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 

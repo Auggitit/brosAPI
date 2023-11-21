@@ -26,6 +26,8 @@
         public string vchstatus { get; set; } = string.Empty;
         public string? company { get; set; }
         public string? branch { get; set; }
+        public string? contactpersonname { get; set; }
+        public string? phone { get; set; }
         public string? fy { get; set; }
         public string? remarks { get; set; }
         public string? invoicecopy { get; set; }

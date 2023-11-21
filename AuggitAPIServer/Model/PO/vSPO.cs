@@ -35,5 +35,7 @@
         public decimal tcsRate { get; set; }
         public decimal tcsValue { get; set; }
         public string potype { get; set; }
+        public string? contactpersonname { get; set; }
+        public string? phone { get; set; }
     }
 }

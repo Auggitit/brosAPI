@@ -6,7 +6,7 @@
         public string invno { get; set; }
         public DateTime invdate { get; set; }
 
-        public int ssid { get; set; }   
+        public int ssid { get; set; }
         public string? sono { get; set; }
         public DateTime sodate { get; set; }
         public string? refno { get; set; }
@@ -45,5 +45,7 @@
         public string vchtype { get; set; }
         public string saleaccount { get; set; }
         public string deliveryaddress { get; set; }
+        public string? contactpersonname { get; set; }
+        public string? phone { get; set; }
     }
 }

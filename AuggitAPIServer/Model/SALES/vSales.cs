@@ -44,5 +44,7 @@
         public string vchtype { get; set; }
         public string saleaccount { get; set; }
         public string deliveryaddress { get; set; }
+        public string? contactpersonname { get; set; }
+        public string? phone { get; set; }
     }
 }

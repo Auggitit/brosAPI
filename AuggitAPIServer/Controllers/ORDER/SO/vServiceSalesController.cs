@@ -97,7 +97,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getServiceSales")]
         public JsonResult GetServiceSales(string id)
         {
-            string query = $"SELECT s.sono,s.invdate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.invno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,v.\"ContactPersonName\",v.\"ContactPhone\" FROM public.\"vSSales\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSSalesDetails\" sd ON s.invno = sd.invno WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.sono,s.invdate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.invno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno FROM public.\"vSSales\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSSalesDetails\" sd ON s.invno = sd.invno WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 
