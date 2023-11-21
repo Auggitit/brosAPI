@@ -26,7 +26,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 queryCon = Common.QueryFilter(ledgerId, string.Empty, fromDate, toDate, globalFilterId, "customercode", "vchdate");
             }
 
-            string query = $"select a.vchno,a.vchdate,a.refno,a.salesbillno,m.\"CompanyDisplayName\" ,a.customercode, sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.crid,a.\"cgsttotal\",a.\"sgsttotal\",a.\"igsttotal\",a.\"net\",a.\"vchcreateddate\" from public.\"vCR\" a left outer join \"vCRDetails\" b on a.vchno=b.vchno\r\n left outer join \"mLedgers\" m on CAST(a.customercode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.vchno,a.vchdate,a.refno,m.\"CompanyDisplayName\",a.salesbillno,a.customercode,a.\"Id\",a.crid";
+            string query = $"select a.vchno,a.vchdate,a.refno,a.salesbillno,m.\"CompanyDisplayName\" ,a.customercode, sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.crid,a.\"cgsttotal\",a.\"sgsttotal\",a.\"igsttotal\",a.\"net\",a.\"vchcreateddate\",m.\"ContactPersonName\",m.\"ContactPhone\" from public.\"vCR\" a left outer join \"vCRDetails\" b on a.vchno=b.vchno\r\n left outer join \"mLedgers\" m on CAST(a.customercode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.vchno,a.vchdate,a.refno,m.\"CompanyDisplayName\",a.salesbillno,a.customercode,a.\"Id\",a.crid,m.\"ContactPersonName\",m.\"ContactPhone\"";
 
             string productsQuery = " select productcode,product,sku,hsn,godown,sum(qty) ordered,0 as received " +
             " ,sum(qty) pqty,rate,disc,gst \r\nfrom \"vCRDetails\" " +
@@ -66,6 +66,8 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                     sgstTotal = dt.Rows[i][14].ToString(),
                     igstTotal = dt.Rows[i][15].ToString(),
                     net = dt.Rows[i][16].ToString(),
+                    contactpersonname = dt.Rows[i][18].ToString(),
+                    contactphone = dt.Rows[i][19].ToString(),
                     products = Common.GetProducts(replacedProductsQuery, _context)
                 };
                 if (!string.IsNullOrEmpty(search))
@@ -91,7 +93,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getCN")]
         public JsonResult GetCN(string id)
         {
-            string query = $"SELECT s.vchno,s.vchdate,s.refno,s.salesbillno,s.customercode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgsttotal\",s.\"sgsttotal\",s.\"igsttotal\",s.\"net\" FROM public.\"vCR\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vCRDetails\" sd ON s.vchno = sd.vchno WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.vchno,s.vchdate,s.refno,s.salesbillno,s.customercode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgsttotal\",s.\"sgsttotal\",s.\"igsttotal\",s.\"net\",v.\"ContactPersonName\",v.\"ContactPhone\" FROM public.\"vCR\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vCRDetails\" sd ON s.vchno = sd.vchno WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 
@@ -112,6 +114,8 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 sgstTotal = dt.Rows[0][17].ToString(),
                 igstTotal = dt.Rows[0][18].ToString(),
                 net = dt.Rows[0][19].ToString(),
+                contactpersonname = dt.Rows[0][20].ToString(),
+                phone = dt.Rows[0][21].ToString(),
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)

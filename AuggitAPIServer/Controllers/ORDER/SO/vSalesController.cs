@@ -26,7 +26,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 queryCon = Common.QueryFilter(ledgerId, salesRef, fromDate, toDate, globalFilterId, "customercode", "invdate");
             }
 
-            string query = $"select a.sono,a.invdate,a.refno,m.\"CompanyDisplayName\" ,a.customercode,a.\"expDeliveryDate\", sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"closingValue\",a.\"Id\",a.invno,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"vchtype\",a.salerefname,a.\"RCreatedDateTime\" from public.\"vSales\" a left outer join \"vSalesDetails\" b on a.invno=b.invno\r\n left outer join \"mLedgers\" m on CAST(a.customercode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.sono,a.invdate,a.refno,m.\"CompanyDisplayName\",a.customercode,a.\"closingValue\",a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.vchtype,a.salerefname,a.\"Id\",a.invno";
+            string query = $"select a.sono,a.invdate,a.refno,m.\"CompanyDisplayName\" ,a.customercode,a.\"expDeliveryDate\", sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"closingValue\",a.\"Id\",a.invno,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"vchtype\",a.salerefname,a.\"RCreatedDateTime\",m.\"ContactPersonName\",m.\"ContactPhone\" from public.\"vSales\" a left outer join \"vSalesDetails\" b on a.invno=b.invno\r\n left outer join \"mLedgers\" m on CAST(a.customercode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.sono,a.invdate,a.refno,m.\"CompanyDisplayName\",a.customercode,a.\"closingValue\",a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.vchtype,a.salerefname,a.\"Id\",a.invno,m.\"ContactPersonName\",m.\"ContactPhone\"";
 
             string productsQuery = " select productcode,product,sku,hsn,godown,sum(qty) ordered,0 as received " +
             " ,sum(qty) pqty,rate,disc,gst \r\nfrom \"vSalesDetails\" " +
@@ -70,6 +70,8 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                     sgstTotal = dt.Rows[0][15].ToString(),
                     igstTotal = dt.Rows[0][16].ToString(),
                     salesRef = dt.Rows[i][21].ToString(),
+                    contactpersonname = dt.Rows[i][23].ToString(),
+                    phone = dt.Rows[i][24].ToString(),
                     products = Common.GetProducts(replacedProductsQuery, _context)
                 };
                 if (!string.IsNullOrEmpty(search))
@@ -95,7 +97,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getSales")]
         public JsonResult GetSales(string id)
         {
-            string query = $"SELECT s.sono,s.invdate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.invno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport  FROM public.\"vSales\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSalesDetails\" sd ON s.invno = sd.invno WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.sono,s.invdate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.invno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,v.\"ContactPersonName\",v.\"ContactPhone\"  FROM public.\"vSales\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSalesDetails\" sd ON s.invno = sd.invno WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 
@@ -117,6 +119,8 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 igstTotal = dt.Rows[0][19].ToString(),
                 net = dt.Rows[0][20].ToString(),
                 expdeliverydate = dt.Rows[0][21].ToString(),
+                contactpersonname = dt.Rows[0][23].ToString(),
+                phone = dt.Rows[0][24].ToString(),
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)

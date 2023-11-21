@@ -26,7 +26,7 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                 queryCon = Common.QueryFilter(ledgerId, string.Empty, fromDate, toDate, globalFilterId, "vendorcode", "grndate");
             }
 
-            string query = $"select a.pono,a.grndate,a.refno,m.\"CompanyDisplayName\" ,a.vendorcode,a.\"expDeliveryDate\", sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.grnno,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"vchtype\",a.\"RCreatedDateTime\" from public.\"vSGrn\" a left outer join \"vSGrnDetails\" b on a.grnno=b.grnno\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.pono,a.grndate,a.refno,m.\"CompanyDisplayName\",a.vendorcode,a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.vchtype,a.\"Id\",a.grnno";
+            string query = $"select a.pono,a.grndate,a.refno,m.\"CompanyDisplayName\" ,a.vendorcode,a.\"expDeliveryDate\", sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.grnno,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"vchtype\",a.\"RCreatedDateTime\",m.\"ContactPersonName\",m.\"ContactPhone\" from public.\"vSGrn\" a left outer join \"vSGrnDetails\" b on a.grnno=b.grnno\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.pono,a.grndate,a.refno,m.\"CompanyDisplayName\",a.vendorcode,a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.vchtype,a.\"Id\",a.grnno,m.\"ContactPersonName\",m.\"ContactPhone\"";
 
             string productsQuery = " select productcode,product,sku,hsn,godown,sum(qty) ordered,0 as received " +
             " ,sum(qty) pqty,rate,disc,gst \r\nfrom \"vSGrnDetails\" " +
@@ -69,6 +69,8 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                     branch = dt.Rows[i][17].ToString(),
                     fy = dt.Rows[i][18].ToString(),
                     vchtype = dt.Rows[i][19].ToString(),
+                        contactpersonname = dt.Rows[i][21].ToString(),
+                        contactphone = dt.Rows[i][22].ToString(),
                     products = Common.GetProducts(replacedProductsQuery, _context)
                 };
                 if (!string.IsNullOrEmpty(search))
@@ -94,7 +96,7 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
         [Route("getSGrn")]
         public JsonResult GetSGrn(string id)
         {
-            string query = $"SELECT s.pono,s.grndate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.grnno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport FROM public.\"vSGrn\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vSGrnDetails\" sd ON s.grnno = sd.grnno WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.pono,s.grndate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.grnno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,v.\"ContactPersonName\",v.\"ContactPhone\" FROM public.\"vSGrn\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vSGrnDetails\" sd ON s.grnno = sd.grnno WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 
@@ -115,6 +117,8 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                 igstTotal = dt.Rows[0][18].ToString(),
                 net = dt.Rows[0][19].ToString(),
                 expdeliverydate = dt.Rows[0][20].ToString(),
+                contactpersonname = dt.Rows[0][22].ToString(),
+                phone = dt.Rows[0][23].ToString(),
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)
