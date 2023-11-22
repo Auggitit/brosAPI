@@ -30,6 +30,6 @@
         public string? remarks { get; set; }
         public string? invoicecopy { get; set; }
         public string? contactpersonname { get; set; }
-        public string? phone { get; set; }
+        public string? phoneno { get; set; }
     }
 }
