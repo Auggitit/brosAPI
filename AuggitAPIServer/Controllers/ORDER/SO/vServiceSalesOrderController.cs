@@ -70,7 +70,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                     igstTotal = dt.Rows[i][15].ToString(),
                     salesRef = dt.Rows[i][20].ToString(),
                     contactpersonname = dt.Rows[i][22].ToString(),
-                    phone = dt.Rows[i][23].ToString(),
+                    phoneno = dt.Rows[i][23].ToString(),
                     products = Common.GetProducts(replacedProductsQuery, _context)
                 };
                 if (!string.IsNullOrEmpty(search))
@@ -117,7 +117,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 net = dt.Rows[0][19].ToString(),
                 expdeliverydate = dt.Rows[0][20].ToString(),
                 contactpersonname = dt.Rows[0][22].ToString(),
-                phone = dt.Rows[0][23].ToString(),
+                phoneno = dt.Rows[0][23].ToString(),
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)
