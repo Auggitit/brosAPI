@@ -95,7 +95,7 @@ namespace AuggitAPIServer.Controllers.SO
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!vSSOExists(id))
+                if (!vSOExists(id))
                 {
                     return NotFound();
                 }
