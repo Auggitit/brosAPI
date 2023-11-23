@@ -11,6 +11,7 @@ using Npgsql;
 using System.Data;
 using Newtonsoft.Json;
 using System.Security.AccessControl;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace AuggitAPIServer.Controllers.PO
 {
@@ -76,6 +77,36 @@ namespace AuggitAPIServer.Controllers.PO
 
             return NoContent();
         }
+        [HttpPost("Update/{id}")]
+        public async Task<IActionResult> PatchvPO(Guid id, int status)
+        {
+            var vPO = await _context.vPO.FindAsync(id);
+
+            if (vPO == null)
+            {
+                return NotFound();
+            }
+
+            vPO.status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vPOExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(vPO);
+        }
 
         // POST: api/vPOes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -110,8 +141,8 @@ namespace AuggitAPIServer.Controllers.PO
         }
 
         [HttpGet]
-        [Route("getMaxInvno")]    
-        public JsonResult getMaxInvno(string potype,string branch,string fycode,string fy)
+        [Route("getMaxInvno")]
+        public JsonResult getMaxInvno(string potype, string branch, string fycode, string fy)
         {
             string invno = "";
             string invnoid = "";
@@ -158,7 +189,7 @@ namespace AuggitAPIServer.Controllers.PO
         [Route("getPOData")]
         public JsonResult getPODetails(string pono)
         {
-            var polist = _context.vPO.Where(s => s.pono == pono).ToList();           
+            var polist = _context.vPO.Where(s => s.pono == pono).ToList();
             return new JsonResult(polist);
         }
 
@@ -194,9 +225,9 @@ namespace AuggitAPIServer.Controllers.PO
 
         [HttpGet]
         [Route("deletePO")]
-        public JsonResult deletePO(string pono,string vtype,string branch ,string fy )
+        public JsonResult deletePO(string pono, string vtype, string branch, string fy)
         {
-            string query = "delete from public.\"vPO\" where \"pono\" ='" + pono + "' and \"potype\"= '"+vtype+ "' and branch='" + branch +"' and fy='" + fy + "' ";
+            string query = "delete from public.\"vPO\" where \"pono\" ='" + pono + "' and \"potype\"= '" + vtype + "' and branch='" + branch + "' and fy='" + fy + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -209,14 +240,14 @@ namespace AuggitAPIServer.Controllers.PO
             return new JsonResult(count);
         }
 
- 
+
 
 
         [HttpGet]
         [Route("deletePODefFields")]
         public JsonResult deletePODefFields(string pono, string vtype)
         {
-            string query = "delete from public.\"poCusFields\" where \"pono\" ='" + pono + "' and \"potype\"= '"+vtype+"' ";
+            string query = "delete from public.\"poCusFields\" where \"pono\" ='" + pono + "' and \"potype\"= '" + vtype + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -252,7 +283,7 @@ namespace AuggitAPIServer.Controllers.PO
         //}
 
 
-       
+
 
     }
 }

@@ -31,7 +31,7 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
             string productsQuery = " select productcode,product,sku,hsn,godown,sum(qty) ordered,0 as received " +
             " ,sum(qty) pqty,rate,disc,gst \r\nfrom \"vGrnDetails\" " +
             " where grnno=' inputno ' \r\ngroup by productcode,product,sku,hsn,godown,rate,disc,gst ";
-
+            Console.WriteLine(query);
             var rtnData = new RtnData();
             rtnData.Result = new List<dynamic>();
 

@@ -76,7 +76,36 @@ namespace AuggitAPIServer.Controllers.PO
 
             return NoContent();
         }
+        [HttpPost("Update/{id}")]
+        public async Task<IActionResult> PatchvSPO(Guid id, int status)
+        {
+            var vSPO = await _context.vSPO.FindAsync(id);
 
+            if (vSPO == null)
+            {
+                return NotFound();
+            }
+
+            vSPO.status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vSPOExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(vSPO);
+        }
         // POST: api/vSPOes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -167,9 +196,9 @@ namespace AuggitAPIServer.Controllers.PO
 
         [HttpGet]
         [Route("deleteSPO")]
-        public JsonResult deleteSPO(int pono,string vtype)
+        public JsonResult deleteSPO(int pono, string vtype)
         {
-            string query = "delete from public.\"vSPO\" where \"pono\" ='" + pono + "' and \"potype\"= '"+vtype+"' ";
+            string query = "delete from public.\"vSPO\" where \"pono\" ='" + pono + "' and \"potype\"= '" + vtype + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -186,7 +215,7 @@ namespace AuggitAPIServer.Controllers.PO
         [Route("deleteSPODetails")]
         public JsonResult deletePODetails(int pono, string vtype)
         {
-            string query = "delete from public.\"vSPODetails\" where \"pono\" ='" + pono + "' and \"potype\"= '"+vtype+"' ";
+            string query = "delete from public.\"vSPODetails\" where \"pono\" ='" + pono + "' and \"potype\"= '" + vtype + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -203,7 +232,7 @@ namespace AuggitAPIServer.Controllers.PO
         [Route("deleteSPODefFields")]
         public JsonResult deletePODefFields(int pono, string vtype)
         {
-            string query = "delete from public.\"spoCusFields\" where \"pono\" ='" + pono + "' and \"potype\"= '"+vtype+"' ";
+            string query = "delete from public.\"spoCusFields\" where \"pono\" ='" + pono + "' and \"potype\"= '" + vtype + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {

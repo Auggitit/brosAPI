@@ -77,7 +77,36 @@ namespace AuggitAPIServer.Controllers.SO
 
             return NoContent();
         }
+        [HttpPost("Update/{id}")]
+        public async Task<IActionResult> PatchvSSO(Guid id, int status)
+        {
+            var vSSO = await _context.vSSO.FindAsync(id);
 
+            if (vSSO == null)
+            {
+                return NotFound();
+            }
+
+            vSSO.status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vSSOExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(vSSO);
+        }
         // POST: api/vSSOes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -112,7 +141,7 @@ namespace AuggitAPIServer.Controllers.SO
 
         [HttpGet]
         [Route("getMaxInvno")]
-        public JsonResult getMaxInvno(string sotype, string branch, string fycode, string fy,string prefix )
+        public JsonResult getMaxInvno(string sotype, string branch, string fycode, string fy, string prefix)
         {
 
             string invno = "";
@@ -188,9 +217,9 @@ namespace AuggitAPIServer.Controllers.SO
 
         [HttpGet]
         [Route("deleteSO")]
-        public JsonResult deleteSO(string sono,string vchtype,string branch,string fy)
+        public JsonResult deleteSO(string sono, string vchtype, string branch, string fy)
         {
-            string query = "delete from public.\"vSSO\" where \"sono\" ='" + sono + "' and sotype = '"+vchtype+"'   and branch = '"+ branch + "'  and fy = '"+fy+"' ";
+            string query = "delete from public.\"vSSO\" where \"sono\" ='" + sono + "' and sotype = '" + vchtype + "'   and branch = '" + branch + "'  and fy = '" + fy + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -207,7 +236,7 @@ namespace AuggitAPIServer.Controllers.SO
         [Route("deleteSODetails")]
         public JsonResult deleteSODetails(string sono, string vchtype, string branch, string fy)
         {
-            string query = "delete from public.\"vSSODetails\" where \"sono\" ='" + sono + "' and sotype = '"+vchtype+"'   and branch = '"+ branch + "'  and fy = '"+fy+"'";
+            string query = "delete from public.\"vSSODetails\" where \"sono\" ='" + sono + "' and sotype = '" + vchtype + "'   and branch = '" + branch + "'  and fy = '" + fy + "'";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -224,7 +253,7 @@ namespace AuggitAPIServer.Controllers.SO
         [Route("getSavedDefSOFields")]
         public JsonResult getSavedDefSOFields(string sono)
         {
-            string query = "select id,efieldname,efieldvalue from public.\"ssoCusFields\" where sono='"+ sono + "'";
+            string query = "select id,efieldname,efieldvalue from public.\"ssoCusFields\" where sono='" + sono + "'";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -246,7 +275,7 @@ namespace AuggitAPIServer.Controllers.SO
         [Route("deleteDefSOFields")]
         public JsonResult deleteDefSOFields(string sono, string vchtype, string branch, string fy)
         {
-            string query = "delete from public.\"ssoCusFields\" where \"sono\" ='" + sono + "' and sotype = '"+vchtype+"'   and branch = '"+ branch + "'  and fy = '"+fy+"'";
+            string query = "delete from public.\"ssoCusFields\" where \"sono\" ='" + sono + "' and sotype = '" + vchtype + "'   and branch = '" + branch + "'  and fy = '" + fy + "'";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {

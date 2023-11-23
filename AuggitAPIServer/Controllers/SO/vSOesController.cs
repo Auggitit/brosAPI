@@ -77,7 +77,36 @@ namespace AuggitAPIServer.Controllers.SO
 
             return NoContent();
         }
+        [HttpPost("Update/{id}")]
+        public async Task<IActionResult> PatchvSO(Guid id, int status)
+        {
+            var vSO = await _context.vPO.FindAsync(id);
 
+            if (vSO == null)
+            {
+                return NotFound();
+            }
+
+            vSO.status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vSSOExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(vSO);
+        }
         // POST: api/vSOes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -112,11 +141,11 @@ namespace AuggitAPIServer.Controllers.SO
 
         [HttpGet]
         [Route("getMaxInvno")]
-        public JsonResult getMaxInvno(string sotype,string branch, string fycode, string fy,string prefix)
+        public JsonResult getMaxInvno(string sotype, string branch, string fycode, string fy, string prefix)
         {
             string invno = "";
             string invnoid = "";
-            string query = "select max(soid) from public.\"vSO\" where sotype='" + sotype + "' and branch='"+branch+"' and fy='"+fycode+"' ";
+            string query = "select max(soid) from public.\"vSO\" where sotype='" + sotype + "' and branch='" + branch + "' and fy='" + fycode + "' ";
             DataTable table = new DataTable();
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -187,9 +216,9 @@ namespace AuggitAPIServer.Controllers.SO
 
         [HttpGet]
         [Route("deleteSO")]
-        public JsonResult deleteSO(string sono,string sotype,string branch ,string fy )
+        public JsonResult deleteSO(string sono, string sotype, string branch, string fy)
         {
-            string query = "delete from public.\"vSO\" where \"sono\" ='" + sono + "' and sotype='"+sotype+"' and branch ='"+branch+"' and fy ='"+fy+"'  ";
+            string query = "delete from public.\"vSO\" where \"sono\" ='" + sono + "' and sotype='" + sotype + "' and branch ='" + branch + "' and fy ='" + fy + "'  ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -206,7 +235,7 @@ namespace AuggitAPIServer.Controllers.SO
         [Route("deleteSODetails")]
         public JsonResult deleteSODetails(string sono, string sotype, string branch, string fy)
         {
-            string query = "delete from public.\"vSODetails\" where \"sono\" ='" + sono + "' and sotype='"+sotype+"' and branch ='"+branch+"' and fy ='"+fy+"'";
+            string query = "delete from public.\"vSODetails\" where \"sono\" ='" + sono + "' and sotype='" + sotype + "' and branch ='" + branch + "' and fy ='" + fy + "'";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -223,7 +252,7 @@ namespace AuggitAPIServer.Controllers.SO
         [Route("deleteDefSOFields")]
         public JsonResult deleteDefSOFields(string sono, string sotype, string branch, string fy)
         {
-            string query = "delete from public.\"soCusFields\" where \"sono\" ='" + sono + "'and sotype='"+sotype+"' and branch ='"+branch+"' and fy ='"+fy+"'";
+            string query = "delete from public.\"soCusFields\" where \"sono\" ='" + sono + "'and sotype='" + sotype + "' and branch ='" + branch + "' and fy ='" + fy + "'";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -257,7 +286,7 @@ namespace AuggitAPIServer.Controllers.SO
             //var json = JsonConvert.SerializeObject(table);
             return new JsonResult(JsonConvert.SerializeObject(table));
         }
-  
+
 
     }
 }
