@@ -26,7 +26,7 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                 queryCon = Common.QueryFilter(ledgerId, string.Empty, fromDate, toDate, globalFilterId, "vendorcode", "grndate");
             }
 
-            string query = $"select a.pono,a.grndate,a.refno,m.\"CompanyDisplayName\" ,a.vendorcode,a.\"expDeliveryDate\", sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.grnno,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"vchtype\",a.\"RCreatedDateTime\",m.\"ContactPersonName\",m.\"ContactPhone\",a.branch,a.fy from public.\"vGrn\" a left outer join \"vGrnDetails\" b on a.grnno=b.grnno\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.pono,a.grndate,a.refno,m.\"CompanyDisplayName\",a.vendorcode,a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.vchtype,a.\"Id\",a.grnno,m.\"ContactPersonName\",m.\"ContactPhone\",a.branch,a.fy";
+            string query = $"select a.pono,a.grndate,a.refno,m.\"CompanyDisplayName\" ,a.vendorcode,a.\"expDeliveryDate\", sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.grnno,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"vchtype\",a.\"RCreatedDateTime\",m.\"ContactPersonName\",m.\"ContactPhone\" from public.\"vGrn\" a left outer join \"vGrnDetails\" b on a.grnno=b.grnno\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.pono,a.grndate,a.refno,m.\"CompanyDisplayName\",a.vendorcode,a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.vchtype,a.\"Id\",a.grnno,m.\"ContactPersonName\",m.\"ContactPhone\"";
 
             string productsQuery = " select productcode,product,sku,hsn,godown,sum(qty) ordered,0 as received " +
             " ,sum(qty) pqty,rate,disc,gst \r\nfrom \"vGrnDetails\" " +
@@ -71,8 +71,6 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                     vchtype = dt.Rows[i][19].ToString(),
                     contactpersonname = dt.Rows[i][21].ToString(),
                     phoneno = dt.Rows[i][22].ToString(),
-                    branch = dt.Rows[i][23].ToString(),
-                    fy = dt.Rows[i][24].ToString(),
                     products = Common.GetProducts(replacedProductsQuery, _context)
                 };
                 if (!string.IsNullOrEmpty(search))
