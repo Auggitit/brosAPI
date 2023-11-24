@@ -26,7 +26,7 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                 queryCon = Common.QueryFilter(ledgerId, string.Empty, fromDate, toDate, globalFilterId, "vendorcode", "podate");
             }
 
-            string query = $"select a.pono,a.podate,a.refno,m.\"CompanyDisplayName\" ,a.vendorcode,a.\"expDeliveryDate\", sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, \r\nsum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,a.\"Id\",a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"potype\",a.\"RCreatedDateTime\",m.\"ContactPersonName\",m.\"ContactPhone\",a.status from public.\"vPO\" a left outer join pending_pos b on a.pono=b.pono\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.pono,a.podate,a.refno,m.\"CompanyDisplayName\",m.\"ContactPersonName\",m.\"ContactPhone\",a.vendorcode,a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.potype,a.\"Id\",a.status {(statusId == null ? ";" : statusId == (int)OrderStatusEnum.Pending ? " HAVING((sum(b.ordered)-sum(b.received))>0);" : " HAVING((sum(b.ordered)-sum(b.received))<=0);")}";
+            string query = $"select a.pono,a.podate,a.refno,m.\"CompanyDisplayName\" ,a.vendorcode,a.\"expDeliveryDate\", sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, \r\nsum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,a.\"Id\",a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"potype\",a.\"RCreatedDateTime\",m.\"ContactPersonName\",m.\"ContactPhone\",a.status,a.branch,a.fy from public.\"vPO\" a left outer join pending_pos b on a.pono=b.pono\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.pono,a.podate,a.refno,m.\"CompanyDisplayName\",m.\"ContactPersonName\",m.\"ContactPhone\",a.vendorcode,a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.potype,a.\"Id\",a.status,a.branch,a.fy {(statusId == null ? ";" : statusId == (int)OrderStatusEnum.Pending ? " HAVING((sum(b.ordered)-sum(b.received))>0);" : " HAVING((sum(b.ordered)-sum(b.received))<=0);")}";
 
             string productsQuery = " select productcode,product,sku,hsn,godown,sum(ordered) ordered,sum(received) received " +
             " ,sum(ordered)-sum(received) pqty,rate,disc,gst \r\nfrom pending_pos " +
@@ -71,6 +71,8 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                     contactpersonname = dt.Rows[i][20].ToString(),
                     phoneno = dt.Rows[i][21].ToString(),
                     status = dt.Rows[i][22].ToString(),
+                    branch = dt.Rows[i][23].ToString(),
+                    fy = dt.Rows[i][24].ToString(),
                     products = Common.GetProducts(replacedProductsQuery, _context)
                 };
                 if (!string.IsNullOrEmpty(search))
@@ -96,7 +98,7 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
         [Route("getPO")]
         public JsonResult GetPO(string id)
         {
-            string query = $"SELECT s.pono,s.podate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno FROM public.\"vPO\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vPODetails\" sd ON s.pono = sd.pono WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.pono,s.podate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.branch,s.fy FROM public.\"vPO\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vPODetails\" sd ON s.pono = sd.pono WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 
@@ -118,6 +120,8 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                 expdeliverydate = dt.Rows[0][19].ToString(),
                 contactpersonname = dt.Rows[0][21].ToString(),
                 phoneno = dt.Rows[0][22].ToString(),
+                branch = dt.Rows[0][23].ToString(),
+                fy = dt.Rows[0][24].ToString(),
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)

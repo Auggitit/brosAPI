@@ -96,7 +96,7 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
         [Route("getSGrn")]
         public JsonResult GetSGrn(string id)
         {
-            string query = $"SELECT s.pono,s.grndate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.grnno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno FROM public.\"vSGrn\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vSGrnDetails\" sd ON s.grnno = sd.grnno WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.pono,s.grndate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.grnno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.branch,s.fy FROM public.\"vSGrn\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vSGrnDetails\" sd ON s.grnno = sd.grnno WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 
@@ -119,6 +119,8 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                 expdeliverydate = dt.Rows[0][20].ToString(),
                 contactpersonname = dt.Rows[0][22].ToString(),
                 phoneno = dt.Rows[0][23].ToString(),
+                branch = dt.Rows[0][24].ToString(),
+                fy = dt.Rows[0][25].ToString(),
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)
