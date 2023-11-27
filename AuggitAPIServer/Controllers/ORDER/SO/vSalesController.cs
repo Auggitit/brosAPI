@@ -143,5 +143,74 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
 
             return new JsonResult(result);
         }
+        [HttpGet]
+        [Route("GetEInvoiceDetails")]
+        public JsonResult getSalesByPO(string sno)
+        {
+            string query = $"SELECT * FROM get_einvoice_details('{sno}');";
+
+            List<dynamic> products = new List<dynamic>();
+
+            var dt = Common.ExecuteQuery(_context, query);
+            if (dt.Rows.Count == 0)
+            {
+                return new JsonResult(NotFound());
+            }
+            var result = new
+            {
+                sno = dt.Rows[0][0].ToString(),
+                invdate = dt.Rows[0][1].ToString(),
+                invno = dt.Rows[0][2].ToString(),
+                gst = dt.Rows[0][3].ToString(),
+                lglNm = dt.Rows[0][4].ToString(),
+                trdnm = dt.Rows[0][5].ToString(),
+                cus_gstin = dt.Rows[0][6].ToString(),
+                cus_name = dt.Rows[0][7].ToString(),
+                cus_scode = dt.Rows[0][8].ToString(),
+                cus_address = dt.Rows[0][9].ToString(),
+                cus_vcountry = dt.Rows[0][10].ToString(),
+                cus_city = dt.Rows[0][11].ToString(),
+                cus_vpincode = dt.Rows[0][12].ToString(),
+                cus_ph = dt.Rows[0][13].ToString(),
+                irnnumber = dt.Rows[0][14].ToString(),
+            };
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        [Route("GetEInvoiceProductDetails")]
+        public JsonResult GetEInvoiceProductDetails(string sno)
+        {
+            string query = $"SELECT * FROM get_einvoice_product_details('{sno}');";
+
+            List<dynamic> products = new List<dynamic>();
+
+            var dt = Common.ExecuteQuery(_context, query);
+            if (dt.Rows.Count == 0)
+            {
+                return new JsonResult(NotFound());
+            }
+            var result = new
+            {
+                sno = dt.Rows[0][0].ToString(),
+                pm_name = dt.Rows[0][1].ToString(),
+                pm_hsncode = dt.Rows[0][2].ToString(),
+                Sal_Billno = dt.Rows[0][3].ToString(),
+                Sal_Qty = dt.Rows[0][4].ToString(),
+                Sal_rate = dt.Rows[0][5].ToString(),
+                TotAmt = dt.Rows[0][6].ToString(),
+                Disc = dt.Rows[0][7].ToString(),
+                taxable = dt.Rows[0][8].ToString(),
+                Sal_Gst = dt.Rows[0][9].ToString(),
+                ITax = dt.Rows[0][10].ToString(),
+                STax = dt.Rows[0][11].ToString(),
+                Net = dt.Rows[0][12].ToString(),
+                S_Sub_Total = dt.Rows[0][13].ToString(),
+                S_SGSTAmount = dt.Rows[0][14].ToString(),
+                S_IGSTAmount = dt.Rows[0][15].ToString(),
+                roundedoff = dt.Rows[0][16].ToString(),
+                S_Grand_Total = dt.Rows[0][17].ToString(),
+            };
+            return new JsonResult(result);
+        }
     }
 }
