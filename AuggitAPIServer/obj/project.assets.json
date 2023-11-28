@@ -12941,6 +12941,7 @@
       "Microsoft.EntityFrameworkCore.SqlServer >= 6.0.16",
       "Microsoft.EntityFrameworkCore.Tools >= 6.0.16",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 6.0.13",
+      "Newtonsoft.Json >= 13.0.3",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 6.0.1",
       "RestSharp >= 110.2.0",
       "Swashbuckle.AspNetCore >= 6.2.3",
@@ -12953,11 +12954,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
+      "projectUniqueName": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
       "projectName": "AuggitAPIServer",
-      "projectPath": "d:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
+      "projectPath": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
       "packagesPath": "C:\\Users\\chand\\.nuget\\packages\\",
-      "outputPath": "d:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\obj\\",
+      "outputPath": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\chand\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -13005,6 +13006,10 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
             "target": "Package",
             "version": "[6.0.13, )"
+          },
+          "Newtonsoft.Json": {
+            "target": "Package",
+            "version": "[13.0.3, )"
           },
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",
