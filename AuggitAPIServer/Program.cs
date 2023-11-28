@@ -27,11 +27,12 @@ Bold.Licensing.BoldLicenseProvider.RegisterLicense("uhKE/WWLnan0+1dw/f7DswNc0l55
 ReportConfig.DefaultSettings = new ReportSettings().RegisterExtensions(new List<string> { "BoldReports.Data.PostgreSQL" });
 
 builder.Services.AddMemoryCache();
-
+builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 

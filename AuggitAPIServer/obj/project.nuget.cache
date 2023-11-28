@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Xs8+vPfV5O0S/Uxql/HUem5BYDbI4eLZGzbyRCgu2BQ85bB5R7L+FFpyF9Y5qH5q3nTtS2ARb1iJF6B+4N7x7A==",
+  "dgSpecHash": "nPVwGeQaEkfJRRUSq3WxPl1kPraL441fWBGuEYaIgDZtzbPpJygvL0ws0mXIxwW6xE2GH5IKGH9ihv3AcgymRA==",
   "success": true,
   "projectFilePath": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,7 @@
     "C:\\Users\\chand\\.nuget\\packages\\messagepack.annotations\\2.1.152\\messagepack.annotations.2.1.152.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\messagepackanalyzer\\2.1.152\\messagepackanalyzer.2.1.152.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\8.0.0\\microsoft.aspnetcore.jsonpatch.8.0.0.nupkg.sha512",
+    "C:\\Users\\chand\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\5.0.14\\microsoft.aspnetcore.mvc.newtonsoftjson.5.0.14.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\6.0.0\\microsoft.aspnetcore.razor.language.6.0.0.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\5.0.0\\microsoft.bcl.asyncinterfaces.5.0.0.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\microsoft.build\\17.3.2\\microsoft.build.17.3.2.nupkg.sha512",
@@ -78,6 +79,7 @@
     "C:\\Users\\chand\\.nuget\\packages\\microsoft.windows.compatibility\\6.0.0\\microsoft.windows.compatibility.6.0.0.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\chand\\.nuget\\packages\\newtonsoft.json.bson\\1.0.2\\newtonsoft.json.bson.1.0.2.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\npgsql\\6.0.1\\npgsql.6.0.1.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\6.0.1\\npgsql.entityframeworkcore.postgresql.6.0.1.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\nuget.common\\6.3.1\\nuget.common.6.3.1.nupkg.sha512",
@@ -238,10 +240,10 @@
     "C:\\Users\\chand\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
-    "C:\\Users\\chand\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.22\\microsoft.netcore.app.ref.6.0.22.nupkg.sha512",
-    "C:\\Users\\chand\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.22\\microsoft.windowsdesktop.app.ref.6.0.22.nupkg.sha512",
     "C:\\Users\\chand\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.22\\microsoft.aspnetcore.app.ref.6.0.22.nupkg.sha512",
-    "C:\\Users\\chand\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.22\\microsoft.netcore.app.host.win-x64.6.0.22.nupkg.sha512"
+    "C:\\Users\\chand\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.22\\microsoft.netcore.app.host.win-x64.6.0.22.nupkg.sha512",
+    "C:\\Users\\chand\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.22\\microsoft.netcore.app.ref.6.0.22.nupkg.sha512",
+    "C:\\Users\\chand\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.22\\microsoft.windowsdesktop.app.ref.6.0.22.nupkg.sha512"
   ],
   "logs": []
 }
