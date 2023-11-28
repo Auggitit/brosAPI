@@ -46,5 +46,9 @@
         public string deliveryaddress { get; set; }
         public string? contactpersonname { get; set; }
         public string? phoneno { get; set; }
+        public string irn { get; set; }
+        public string acknumber { get; set; }
+        public string ackdate { get; set; }
+
     }
 }
