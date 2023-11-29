@@ -165,5 +165,6 @@ namespace AuggitAPIServer.Data
         public DbSet<ConsumptionDetails>? ConsDetails { get; set; }
         public DbSet<ProductionConsumption>? ProCon { get; set; }
         public DbSet<FinancialYear> FinancialYears { get; set; }
+        public DbSet<AuggitAPIServer.Model.MASTER.AccountMaster.DayBook> DayBooks { get; set; }
     }
 }
