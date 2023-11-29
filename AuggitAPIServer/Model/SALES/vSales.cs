@@ -46,9 +46,9 @@
         public string deliveryaddress { get; set; }
         public string? contactpersonname { get; set; }
         public string? phoneno { get; set; }
-        public string irn { get; set; }= string.Empty;
-        public string acknumber { get; set; }= string.Empty;
-        public string ackdate { get; set; }= string.Empty;
+        public string? irn { get; set; } = null;
+        public string? acknumber { get; set; } = null;
+        public string? ackdate { get; set; } = null;
 
     }
 }

@@ -76,6 +76,35 @@ namespace AuggitAPIServer.Controllers.SALES
 
             return NoContent();
         }
+        [HttpPost("UpdatevSales")]
+        public async Task<IActionResult> UpdatevSales(EinvoiceResponse vSales)
+        {
+            var sales = await _context.vSales.FindAsync(vSales.id);
+            if (sales == null)
+            {
+                return NotFound();
+            }
+            sales.irn = vSales.irn;
+            sales.acknumber = vSales.acknumber;
+            sales.ackdate = vSales.ackdate;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vSalesExists(vSales.id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
 
         // POST: api/vSales
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -213,13 +242,19 @@ namespace AuggitAPIServer.Controllers.SALES
             var response = new { InvNo = invno, InvNoId = invnoid };
             return new JsonResult(response);
         }
-
+        public class EinvoiceResponse
+        {
+            public Guid id { get; set; }
+            public string irn { get; set; }
+            public string acknumber { get; set; }
+            public string ackdate { get; set; }
+        }
         public class solist
         {
             public string sono { get; set; }
             public string ssoid { get; set; }
             public string branch { get; set; }
-            public string fy { get; set; }  
+            public string fy { get; set; }
             public string sodate { get; set; }
             public string vendorname { get; set; }
             public string vendorcode { get; set; }
@@ -279,7 +314,7 @@ namespace AuggitAPIServer.Controllers.SALES
                     receivedvalue = dt.Rows[i][8].ToString(),
                     pending = dt.Rows[i][9].ToString(),
                     net = dt.Rows[i][10].ToString(),
-                  
+
                     solistDetails = GetPendingSOListProductDetailsService(pono: dt.Rows[i][0].ToString())
                 };
                 polist.Add(pl);
@@ -561,105 +596,105 @@ namespace AuggitAPIServer.Controllers.SALES
             try
             {
                 string query = "select * from public.\"vSales\" order by invno";
-            List<saleslist> grnlist = new List<saleslist>();
-            using (NpgsqlConnection connection = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
-            {
-
-                connection.Open();
-
-                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                List<saleslist> grnlist = new List<saleslist>();
+                using (NpgsqlConnection connection = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
                 {
-                    using (NpgsqlDataReader reader = command.ExecuteReader())
-                    {
 
-                        while (reader.Read())
+                    connection.Open();
+
+                    using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                    {
+                        using (NpgsqlDataReader reader = command.ExecuteReader())
                         {
 
-                            saleslist pl = new saleslist
+                            while (reader.Read())
                             {
-                                id = new Guid(reader["Id"].ToString()),
-                                invno = reader["invno"].ToString(),
-                                invdate = reader["invdate"].ToString(),
-                                sono = reader["sono"].ToString(),
-                                sodate = reader["sodate"].ToString(),
-                                refno = reader["refno"].ToString(),
-                                customercode = reader["customercode"].ToString(),
-                                customername = reader["customername"].ToString(),
-                                vinvno = reader["vinvno"].ToString(),
-                                vinvdate = reader["vinvdate"].ToString(),
-                                expDeliveryDate = reader["expDeliveryDate"].ToString(),
-                                payTerm = reader["payTerm"].ToString(),
-                                remarks = reader["remarks"].ToString(),
-                                subTotal = reader["subTotal"].ToString(),
-                                discountTotal = reader["discountTotal"].ToString(),
-                                cgstTotal = reader["cgstTotal"].ToString(),
-                                sgstTotal = reader["sgstTotal"].ToString(),
-                                igstTotal = reader["igstTotal"].ToString(),
-                                tds = reader["tds"].ToString(),
-                                roundedoff = reader["roundedoff"].ToString(),
-                                net = reader["net"].ToString(),
-                                createdDate = reader["RCreatedDateTime"].ToString(),
-                                vchtype = reader["vchtype"].ToString(),
-                                branch = reader["branch"].ToString(),
-                                fy = reader["fy"].ToString(),
-                                saleslistDetails = GetSalesListProductDetails(invno: reader["invno"].ToString())
-                            };
-                            grnlist.Add(pl);
+
+                                saleslist pl = new saleslist
+                                {
+                                    id = new Guid(reader["Id"].ToString()),
+                                    invno = reader["invno"].ToString(),
+                                    invdate = reader["invdate"].ToString(),
+                                    sono = reader["sono"].ToString(),
+                                    sodate = reader["sodate"].ToString(),
+                                    refno = reader["refno"].ToString(),
+                                    customercode = reader["customercode"].ToString(),
+                                    customername = reader["customername"].ToString(),
+                                    vinvno = reader["vinvno"].ToString(),
+                                    vinvdate = reader["vinvdate"].ToString(),
+                                    expDeliveryDate = reader["expDeliveryDate"].ToString(),
+                                    payTerm = reader["payTerm"].ToString(),
+                                    remarks = reader["remarks"].ToString(),
+                                    subTotal = reader["subTotal"].ToString(),
+                                    discountTotal = reader["discountTotal"].ToString(),
+                                    cgstTotal = reader["cgstTotal"].ToString(),
+                                    sgstTotal = reader["sgstTotal"].ToString(),
+                                    igstTotal = reader["igstTotal"].ToString(),
+                                    tds = reader["tds"].ToString(),
+                                    roundedoff = reader["roundedoff"].ToString(),
+                                    net = reader["net"].ToString(),
+                                    createdDate = reader["RCreatedDateTime"].ToString(),
+                                    vchtype = reader["vchtype"].ToString(),
+                                    branch = reader["branch"].ToString(),
+                                    fy = reader["fy"].ToString(),
+                                    saleslistDetails = GetSalesListProductDetails(invno: reader["invno"].ToString())
+                                };
+                                grnlist.Add(pl);
+                            }
                         }
                     }
-                }
 
-                return new JsonResult(grnlist);
-            }
+                    return new JsonResult(grnlist);
+                }
             }
             catch (Exception ex)
             {
-                return new JsonResult( "An error occurred while fetching sales data. Please try again later.");
+                return new JsonResult("An error occurred while fetching sales data. Please try again later.");
             }
         }
 
-    //[HttpGet]
-    //    [Route("GetSalesListAll")]
-    //    public JsonResult GetGRNListAll()
-    //    {
-    //        string query = "select * from public.\"vSales\" order by invno";
-    //        List<saleslist> grnlist = new List<saleslist>();
-    //        NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
-    //        DataTable dt = new DataTable();
-    //        da.Fill(dt);
-    //        for (int i = 0; i < dt.Rows.Count; i++)
-    //        {
-    //            saleslist pl = new saleslist
-    //            {
-    //                id = new Guid(dt.Rows[i]["Id"].ToString()),
-    //                invno = dt.Rows[i]["invno"].ToString(),
-    //                invdate = dt.Rows[i]["invdate"].ToString(),
-    //                sono = dt.Rows[i]["sono"].ToString(),
-    //                sodate = dt.Rows[i]["sodate"].ToString(),
-    //                refno = dt.Rows[i]["refno"].ToString(),
-    //                customercode = dt.Rows[i]["customercode"].ToString(),
-    //                customername = dt.Rows[i]["customername"].ToString(),
-    //                vinvno = dt.Rows[i]["vinvno"].ToString(),
-    //                vinvdate = dt.Rows[i]["vinvdate"].ToString(),
-    //                expDeliveryDate = dt.Rows[i]["expDeliveryDate"].ToString(),
-    //                payTerm = dt.Rows[i]["payTerm"].ToString(),
-    //                remarks = dt.Rows[i]["remarks"].ToString(),
-    //                subTotal = dt.Rows[i]["subTotal"].ToString(),
-    //                discountTotal = dt.Rows[i]["discountTotal"].ToString(),
-    //                cgstTotal = dt.Rows[i]["cgstTotal"].ToString(),
-    //                sgstTotal = dt.Rows[i]["sgstTotal"].ToString(),
-    //                igstTotal = dt.Rows[i]["igstTotal"].ToString(),
-    //                tds = dt.Rows[i]["tds"].ToString(),
-    //                roundedoff = dt.Rows[i]["roundedoff"].ToString(),
-    //                net = dt.Rows[i]["net"].ToString(),
-    //                createdDate = dt.Rows[i]["RCreatedDateTime"].ToString(),
-    //                vchtype = dt.Rows[i]["vchtype"].ToString(),
-    //                saleslistDetails = GetSalesListProductDetails(invno: dt.Rows[i]["invno"].ToString())
-    //            };
-    //            grnlist.Add(pl);
-    //        }
-    //        return new JsonResult(grnlist);
-    //    }
+        //[HttpGet]
+        //    [Route("GetSalesListAll")]
+        //    public JsonResult GetGRNListAll()
+        //    {
+        //        string query = "select * from public.\"vSales\" order by invno";
+        //        List<saleslist> grnlist = new List<saleslist>();
+        //        NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
+        //        DataTable dt = new DataTable();
+        //        da.Fill(dt);
+        //        for (int i = 0; i < dt.Rows.Count; i++)
+        //        {
+        //            saleslist pl = new saleslist
+        //            {
+        //                id = new Guid(dt.Rows[i]["Id"].ToString()),
+        //                invno = dt.Rows[i]["invno"].ToString(),
+        //                invdate = dt.Rows[i]["invdate"].ToString(),
+        //                sono = dt.Rows[i]["sono"].ToString(),
+        //                sodate = dt.Rows[i]["sodate"].ToString(),
+        //                refno = dt.Rows[i]["refno"].ToString(),
+        //                customercode = dt.Rows[i]["customercode"].ToString(),
+        //                customername = dt.Rows[i]["customername"].ToString(),
+        //                vinvno = dt.Rows[i]["vinvno"].ToString(),
+        //                vinvdate = dt.Rows[i]["vinvdate"].ToString(),
+        //                expDeliveryDate = dt.Rows[i]["expDeliveryDate"].ToString(),
+        //                payTerm = dt.Rows[i]["payTerm"].ToString(),
+        //                remarks = dt.Rows[i]["remarks"].ToString(),
+        //                subTotal = dt.Rows[i]["subTotal"].ToString(),
+        //                discountTotal = dt.Rows[i]["discountTotal"].ToString(),
+        //                cgstTotal = dt.Rows[i]["cgstTotal"].ToString(),
+        //                sgstTotal = dt.Rows[i]["sgstTotal"].ToString(),
+        //                igstTotal = dt.Rows[i]["igstTotal"].ToString(),
+        //                tds = dt.Rows[i]["tds"].ToString(),
+        //                roundedoff = dt.Rows[i]["roundedoff"].ToString(),
+        //                net = dt.Rows[i]["net"].ToString(),
+        //                createdDate = dt.Rows[i]["RCreatedDateTime"].ToString(),
+        //                vchtype = dt.Rows[i]["vchtype"].ToString(),
+        //                saleslistDetails = GetSalesListProductDetails(invno: dt.Rows[i]["invno"].ToString())
+        //            };
+        //            grnlist.Add(pl);
+        //        }
+        //        return new JsonResult(grnlist);
+        //    }
 
         [HttpGet]
         [Route("GetSalesListProductDetails")]
@@ -718,9 +753,9 @@ namespace AuggitAPIServer.Controllers.SALES
 
         [HttpGet]
         [Route("deleteSalesAccounts")]
-        public JsonResult deleteSalesAccounts(string invno, string vtype,string branch,string fy )
+        public JsonResult deleteSalesAccounts(string invno, string vtype, string branch, string fy)
         {
-            string query = "delete from public.\"accountentry\" where \"vchno\" ='" + invno + "' and vchtype='"+ vtype + "' and branch ='"+branch+"' and fy = '"+fy+"' ";
+            string query = "delete from public.\"accountentry\" where \"vchno\" ='" + invno + "' and vchtype='" + vtype + "' and branch ='" + branch + "' and fy = '" + fy + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -735,9 +770,9 @@ namespace AuggitAPIServer.Controllers.SALES
 
         [HttpGet]
         [Route("deleteSalesOverdue")]
-        public JsonResult deleteSalesOverdue(string invno,string vtype)
+        public JsonResult deleteSalesOverdue(string invno, string vtype)
         {
-            string query = "delete from public.\"overdueentry\" where \"vchno\" ='" + invno + "' and vouchertype='"+vtype+"' ";
+            string query = "delete from public.\"overdueentry\" where \"vchno\" ='" + invno + "' and vouchertype='" + vtype + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -752,9 +787,9 @@ namespace AuggitAPIServer.Controllers.SALES
 
         [HttpGet]
         [Route("deleteSalesCusFields")]
-        public JsonResult deleteSalesCusFields(string invno, string vtype,string branch, string fy )
+        public JsonResult deleteSalesCusFields(string invno, string vtype, string branch, string fy)
         {
-            string query = "delete from public.\"vSalesCusFields\" where \"grnno\" ='" + invno + "' and grntype='" + vtype+ "' and   branch='" + branch+"' and fy ='"+fy+"' ";
+            string query = "delete from public.\"vSalesCusFields\" where \"grnno\" ='" + invno + "' and grntype='" + vtype + "' and   branch='" + branch + "' and fy ='" + fy + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -769,9 +804,9 @@ namespace AuggitAPIServer.Controllers.SALES
 
         [HttpGet]
         [Route("deleteSales")]
-        public JsonResult deleteSales(string invno, string vtype,string branch,string fy)
+        public JsonResult deleteSales(string invno, string vtype, string branch, string fy)
         {
-            string query = "delete from public.\"vSales\" where \"invno\" ='" + invno + "' and vchtype ='" + vtype+ "' and   branch='" + branch+"' and fy ='"+fy+"' ";
+            string query = "delete from public.\"vSales\" where \"invno\" ='" + invno + "' and vchtype ='" + vtype + "' and   branch='" + branch + "' and fy ='" + fy + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -788,7 +823,7 @@ namespace AuggitAPIServer.Controllers.SALES
         [Route("deleteSALESDetails")]
         public JsonResult deleteSALESDetails(string invno, string vtype, string branch, string fy)
         {
-            string query = "delete from public.\"vSalesDetails\" where \"invno\" ='" + invno + "' and vtype='"+vtype+"' and branch = '"+branch+"' and fy= '"+fy+"' ";
+            string query = "delete from public.\"vSalesDetails\" where \"invno\" ='" + invno + "' and vtype='" + vtype + "' and branch = '" + branch + "' and fy= '" + fy + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
@@ -807,7 +842,7 @@ namespace AuggitAPIServer.Controllers.SALES
         {
             string query = "select id,efieldname,efieldvalue from public.\"vSalesCusFields\" where grnno='" + invno + "'";
             DataTable table = new DataTable();
-           
+
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
                 myCon.Open();
@@ -846,7 +881,7 @@ namespace AuggitAPIServer.Controllers.SALES
         }
     }
 }
-  
+
 
 
 
