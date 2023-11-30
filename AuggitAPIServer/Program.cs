@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
            policy =>
            {
-               policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();               
+               policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
                policy.WithOrigins("https://auggit.brositecom.com").AllowAnyMethod().AllowAnyHeader();
                policy.WithOrigins("https://auggitdev.brositecom.com").AllowAnyMethod().AllowAnyHeader();
            });
@@ -44,8 +44,8 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
         options.RoutePrefix = string.Empty;
     });
-    app.UseStaticFiles();
 }
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
