@@ -49,6 +49,7 @@
         public string? irn { get; set; } = null;
         public string? acknumber { get; set; } = null;
         public string? ackdate { get; set; } = null;
+        public int? status { get; set; } = null;
 
     }
 }

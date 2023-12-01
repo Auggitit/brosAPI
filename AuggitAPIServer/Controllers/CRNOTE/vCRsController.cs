@@ -45,6 +45,37 @@ namespace AuggitAPIServer.Controllers.CRNOTE
             return vCR;
         }
 
+         [HttpPost("Update/{id}")]
+        public async Task<IActionResult> PatchVSales(Guid id, int status)
+        {
+            var vCR = await _context.vCR.FindAsync(id);
+
+            if (vCR == null)
+            {
+                return NotFound();
+            }
+
+            vCR.status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vCRExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(vCR);
+        }
+
         // PUT: api/vCRs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

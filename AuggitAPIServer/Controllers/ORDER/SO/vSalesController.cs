@@ -26,7 +26,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 queryCon = Common.QueryFilter(ledgerId, salesRef, fromDate, toDate, globalFilterId, "customercode", "invdate");
             }
 
-            string query = $"select a.sono,a.invdate,a.refno,m.\"CompanyDisplayName\" ,a.customercode,a.\"expDeliveryDate\", sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"closingValue\",a.\"Id\",a.invno,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"vchtype\",a.salerefname,a.\"RCreatedDateTime\",m.\"ContactPersonName\",m.\"ContactPhone\" from public.\"vSales\" a left outer join \"vSalesDetails\" b on a.invno=b.invno\r\n left outer join \"mLedgers\" m on CAST(a.customercode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.sono,a.invdate,a.refno,m.\"CompanyDisplayName\",a.customercode,a.\"closingValue\",a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.vchtype,a.salerefname,a.\"Id\",a.invno,m.\"ContactPersonName\",m.\"ContactPhone\"";
+            string query = $"select a.sono,a.invdate,a.refno,m.\"CompanyDisplayName\" ,a.customercode,a.\"expDeliveryDate\", sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"closingValue\",a.\"Id\",a.invno,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"net\",a.\"branch\",a.\"fy\",a.\"vchtype\",a.salerefname,a.\"RCreatedDateTime\",m.\"ContactPersonName\",m.\"ContactPhone\",a.status from public.\"vSales\" a left outer join \"vSalesDetails\" b on a.invno=b.invno\r\n left outer join \"mLedgers\" m on CAST(a.customercode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.sono,a.invdate,a.refno,m.\"CompanyDisplayName\",a.customercode,a.\"closingValue\",a.\"expDeliveryDate\",a.net,a.branch,a.fy,a.vchtype,a.salerefname,a.\"Id\",a.invno,m.\"ContactPersonName\",m.\"ContactPhone\"";
 
             string productsQuery = " select productcode,product,sku,hsn,godown,sum(qty) ordered,0 as received " +
             " ,sum(qty) pqty,rate,disc,gst \r\nfrom \"vSalesDetails\" " +
@@ -72,6 +72,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                     salesRef = dt.Rows[i][21].ToString(),
                     contactpersonname = dt.Rows[i][23].ToString(),
                     phoneno = dt.Rows[i][24].ToString(),
+                    status = dt.Rows[i][25].ToString(),
                     products = Common.GetProducts(replacedProductsQuery, _context)
                 };
                 if (!string.IsNullOrEmpty(search))

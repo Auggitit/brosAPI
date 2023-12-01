@@ -48,6 +48,37 @@ namespace AuggitAPIServer.Controllers.SALES
             return vSSales;
         }
 
+        [HttpPost("Update/{id}")]
+        public async Task<IActionResult> PatchVSSales(Guid id, int status)
+        {
+            var vSSales = await _context.vSSales.FindAsync(id);
+
+            if (vSSales == null)
+            {
+                return NotFound();
+            }
+
+            vSSales.status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vSSalesExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(vSSales);
+        }
+
         // PUT: api/vSSales/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

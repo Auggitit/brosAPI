@@ -76,6 +76,38 @@ namespace AuggitAPIServer.Controllers.SALES
 
             return NoContent();
         }
+
+         [HttpPost("Update/{id}")]
+        public async Task<IActionResult> PatchVSales(Guid id, int status)
+        {
+            var vSales = await _context.vSales.FindAsync(id);
+
+            if (vSales == null)
+            {
+                return NotFound();
+            }
+
+            vSales.status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vSalesExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(vSales);
+        }
+        
         [HttpPost("UpdatevSales")]
         public async Task<IActionResult> UpdatevSales(EinvoiceResponse vSales)
         {
