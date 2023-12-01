@@ -48,5 +48,6 @@
         public string deliveryaddress { get; set; }
         public string? contactpersonname { get; set; }
         public string? phoneno { get; set; }
+        public int? status  { get; set; }
     }
 }

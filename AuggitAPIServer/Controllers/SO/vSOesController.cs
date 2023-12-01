@@ -80,7 +80,7 @@ namespace AuggitAPIServer.Controllers.SO
         [HttpPost("Update/{id}")]
         public async Task<IActionResult> PatchvSO(Guid id, int status)
         {
-            var vSO = await _context.vPO.FindAsync(id);
+            var vSO = await _context.vSO.FindAsync(id);
 
             if (vSO == null)
             {
