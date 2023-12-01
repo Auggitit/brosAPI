@@ -88,6 +88,37 @@ namespace AuggitAPIServer.Controllers.GRN
             return CreatedAtAction("GetvSGrn", new { id = vSGrn.Id }, vSGrn);
         }
 
+        [HttpPost("Update/{id}")]
+        public async Task<IActionResult> PatchVSGrn(Guid id, int status)
+        {
+            var vSGrn = await _context.vSGrn.FindAsync(id);
+
+            if (vSGrn == null)
+            {
+                return NotFound();
+            }
+
+            vSGrn.status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vSGrnExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(vSGrn);
+        }
+
         // DELETE: api/vSGrns/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletevSGrn(Guid id)
