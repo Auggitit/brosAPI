@@ -45,6 +45,38 @@ namespace AuggitAPIServer.Controllers.DRNOTE
             return vDR;
         }
 
+         [HttpPost("Update/{id}")]
+        public async Task<IActionResult> PatchVDR(Guid id, int status)
+        {
+            var vDR = await _context.vDR.FindAsync(id);
+
+            if (vDR == null)
+            {
+                return NotFound();
+            }
+
+            vDR.status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!vDRExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new JsonResult(vDR);
+        }
+
+
         // PUT: api/vDRs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

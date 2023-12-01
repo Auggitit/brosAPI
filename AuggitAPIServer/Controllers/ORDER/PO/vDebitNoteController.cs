@@ -26,7 +26,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 queryCon = Common.QueryFilter(ledgerId, string.Empty, fromDate, toDate, globalFilterId, "vendorcode", "vchdate");
             }
 
-            string query = $"select a.vchno,a.vchdate,a.refno,a.purchasebillno,m.\"CompanyDisplayName\" ,a.vendorcode, sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.drid,a.\"cgsttotal\",a.\"sgsttotal\",a.\"igsttotal\",a.\"net\",a.\"vchcreateddate\",m.\"ContactPersonName\",m.\"ContactPhone\",a.branch,a.fy from public.\"vDR\" a left outer join \"vDRDetails\" b on a.vchno=b.vchno\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.vchno,a.vchdate,a.refno,m.\"CompanyDisplayName\",a.purchasebillno,a.vendorcode,a.\"Id\",a.drid,m.\"ContactPersonName\",m.\"ContactPhone\",a.branch,a.fy ";
+            string query = $"select a.vchno,a.vchdate,a.refno,a.purchasebillno,m.\"CompanyDisplayName\" ,a.vendorcode, sum(b.amount) Ordered_Value,sum(b.qty) Ordered,0 as Received, \r\n 0 as Received_Value,sum(b.qty) Pending,a.\"Id\",a.drid,a.\"cgsttotal\",a.\"sgsttotal\",a.\"igsttotal\",a.\"net\",a.\"vchcreateddate\",m.\"ContactPersonName\",m.\"ContactPhone\",a.branch,a.fy,a.status from public.\"vDR\" a left outer join \"vDRDetails\" b on a.vchno=b.vchno\r\n left outer join \"mLedgers\" m on CAST(a.vendorcode AS integer)  = m.\"LedgerCode\" \r\n where 1=1 {queryCon} group by a.vchno,a.vchdate,a.refno,m.\"CompanyDisplayName\",a.purchasebillno,a.vendorcode,a.\"Id\",a.drid,m.\"ContactPersonName\",m.\"ContactPhone\",a.branch,a.fy ";
 
             string productsQuery = " select productcode,product,sku,hsn,godown,sum(qty) ordered,0 as received " +
             " ,sum(qty) pqty,rate,disc,gst \r\nfrom \"vDRDetails\" " +
@@ -70,6 +70,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                     phoneno = dt.Rows[i][19].ToString(),
                     branch = dt.Rows[i][20].ToString(),
                     fy = dt.Rows[i][21].ToString(),
+                    status = dt.Rows[i][22].ToString(),
                     products = Common.GetProducts(replacedProductsQuery, _context)
                 };
                 if (!string.IsNullOrEmpty(search))

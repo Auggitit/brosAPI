@@ -31,5 +31,6 @@
         public string? fy { get; set; }
         public string? remarks { get; set; }
         public string? invoicecopy { get; set; }
+        public int? status { get; set; }
     }
 }
