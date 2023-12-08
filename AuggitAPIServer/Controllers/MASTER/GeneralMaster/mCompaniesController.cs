@@ -78,6 +78,7 @@ namespace AuggitAPIServer.Controllers.Master.GeneralMaster
         [HttpPost]
         public async Task<ActionResult<mCompany>> PostmCompany(mCompany mCompany)
         {
+            mCompany.RCreatedDateTime = DateTime.UtcNow;
             _context.mCompany.Add(mCompany);
             await _context.SaveChangesAsync();
 

@@ -12,6 +12,8 @@
         public string State { get; set; }
         public string StateCode { get; set; }
         public string Address { get; set; }
+        public string officeaddress { get; set; } = string.Empty;
+        public string imageurl { get; set; } = string.Empty;
         public string Pincode { get; set; }
         public string Mobile { get; set; } = string.Empty;
         public string Telephone { get; set; } = string.Empty;
