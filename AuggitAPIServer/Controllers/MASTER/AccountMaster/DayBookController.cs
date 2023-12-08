@@ -88,6 +88,33 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
             return NoContent();
         }
 
+        [HttpPost("filteredData")]
+        public async Task<ActionResult<IEnumerable<DayBook>>> GetFilterDayBook( filterData postData)
+        {
+            
+            DateTimeOffset parsedFromDate;
+            DateTimeOffset parsedToDate;
+
+            if (!DateTimeOffset.TryParse(postData.fromDate, out parsedFromDate) || !DateTimeOffset.TryParse(postData.toDate, out parsedToDate))
+            {
+                return BadRequest("Invalid date format");
+            }
+
+            var utcFromDate = parsedFromDate.UtcDateTime.Date.AddDays(1).AddHours(-5).AddMinutes(-30);
+            var utcToDate = parsedToDate.UtcDateTime.Date.AddDays(2).AddHours(-5).AddMinutes(-30).AddSeconds(-1);
+
+            Console.WriteLine(utcFromDate);     
+            Console.WriteLine(utcToDate);     
+
+            var rtnData = await _context.DayBooks
+                .Where(d => d.date >= utcFromDate && d.date <= utcToDate)
+                .ToListAsync();
+
+            return new JsonResult(rtnData);
+        }
+
+        
+
         // private bool mDeliveryAddressExists(Guid id)
         // {
         //     return (_context.mDeliveryAddress?.Any(e => e.id == id)).GetValueOrDefault();

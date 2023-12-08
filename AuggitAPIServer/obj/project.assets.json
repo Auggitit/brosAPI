@@ -13023,24 +13023,31 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\chand\\.nuget\\packages\\": {}
+    "C:\\Users\\Windows\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
+      "projectUniqueName": "D:\\Projects\\Auggit-Backend\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
       "projectName": "AuggitAPIServer",
-      "projectPath": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
-      "packagesPath": "C:\\Users\\chand\\.nuget\\packages\\",
-      "outputPath": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\obj\\",
+      "projectPath": "D:\\Projects\\Auggit-Backend\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
+      "packagesPath": "C:\\Users\\Windows\\.nuget\\packages\\",
+      "outputPath": "D:\\Projects\\Auggit-Backend\\brosAPI\\AuggitAPIServer\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\chand\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Windows\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

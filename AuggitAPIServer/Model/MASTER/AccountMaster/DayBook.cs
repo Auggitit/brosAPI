@@ -13,4 +13,9 @@ namespace AuggitAPIServer.Model.MASTER.AccountMaster
         public string? branch { get; set; }
         public string? fy { get; set; }
     }
+
+    public class filterData{
+        public string? fromDate { get; set; }
+        public string? toDate { get; set; }     
+    }
 }
