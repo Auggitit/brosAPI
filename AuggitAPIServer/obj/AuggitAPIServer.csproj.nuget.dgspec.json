@@ -1,31 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\Auggit-Backend\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj": {}
+    "D:\\auggit\\Bros-Api\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\Auggit-Backend\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj": {
+    "D:\\auggit\\Bros-Api\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\Auggit-Backend\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
+        "projectUniqueName": "D:\\auggit\\Bros-Api\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
         "projectName": "AuggitAPIServer",
-        "projectPath": "D:\\Projects\\Auggit-Backend\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
-        "packagesPath": "C:\\Users\\Windows\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\Auggit-Backend\\brosAPI\\AuggitAPIServer\\obj\\",
+        "projectPath": "D:\\auggit\\Bros-Api\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
+        "packagesPath": "C:\\Users\\rajes\\.nuget\\packages\\",
+        "outputPath": "D:\\auggit\\Bros-Api\\brosAPI\\AuggitAPIServer\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Windows\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\rajes\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\sdk\\7.0.305\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -105,19 +100,19 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[6.0.22, 6.0.22]"
+              "version": "[6.0.19, 6.0.19]"
             },
             {
               "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[6.0.22, 6.0.22]"
+              "version": "[6.0.19, 6.0.19]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
-              "version": "[6.0.22, 6.0.22]"
+              "version": "[6.0.19, 6.0.19]"
             },
             {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[6.0.22, 6.0.22]"
+              "version": "[6.0.19, 6.0.19]"
             }
           ],
           "frameworkReferences": {
@@ -128,7 +123,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.305\\RuntimeIdentifierGraph.json"
         }
       }
     }
