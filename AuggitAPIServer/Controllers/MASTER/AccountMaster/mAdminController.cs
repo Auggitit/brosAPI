@@ -4,6 +4,9 @@ using AuggitAPIServer.Data;
 using AuggitAPIServer.Model.MASTER.AccountMaster;
 using System.Security.Cryptography;
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 
 namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
@@ -19,6 +22,37 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
             _context = context;
         }
 
+        [HttpPost("login")]
+        public async Task<ActionResult<mAdmin>> Login(LoginRequest loginRequest)
+        {
+            var user = await _context.mAdmins.SingleOrDefaultAsync(u =>
+                (u.user_name == loginRequest.Username || u.email == loginRequest.Username) &&
+                u.password == Encrypt(loginRequest.Password, security_key));
+
+            if (user == null)
+            {
+                return Unauthorized("Invalid username/email or password");
+            }
+
+            var token = GenerateJwtToken(user);
+            user.token = token;
+            await _context.SaveChangesAsync();
+            return Ok(user);
+        }
+
+        [HttpPost("logout")]
+        public async Task<ActionResult<mAdmin>> Logout(string user_name)
+        {
+            var user = await _context.mAdmins.SingleOrDefaultAsync(u => (u.user_name == user_name));
+
+            if (user == null)
+            {
+                return Unauthorized($"Invalid username {user_name}");
+            }
+            user.token = "";
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
         // GET: api/mAdmins
         [HttpGet]
         public async Task<ActionResult<IEnumerable<mAdmin>>> GetmAdmins()
@@ -145,5 +179,31 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
                 }
             }
         }
+        private string GenerateJwtToken(mAdmin user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(security_key);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+                    new Claim(ClaimTypes.Name, user.user_name),
+                }),
+                Expires = DateTime.UtcNow.AddHours(1), // Token expiration time
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                                                            SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+    }
+    public class LoginRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 }
