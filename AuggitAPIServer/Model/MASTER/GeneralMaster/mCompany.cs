@@ -48,5 +48,6 @@
         public string EnableTDSForStockItems { get; set; } = string.Empty;
         public DateTime RCreatedDateTime { get; set; }
         public string RStatus { get; set; } = string.Empty;
+        public string? branch { get; set; } = string.Empty;
     }
 }
