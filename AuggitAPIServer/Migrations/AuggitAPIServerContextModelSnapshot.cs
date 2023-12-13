@@ -296,6 +296,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("company")
                         .HasColumnType("text");
 
+                    b.Property<string>("contactpersonname")
+                        .HasColumnType("text");
+
                     b.Property<int>("crid")
                         .HasColumnType("integer");
 
@@ -320,6 +323,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<decimal>("net")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("phoneno")
+                        .HasColumnType("text");
+
                     b.Property<string>("refno")
                         .HasColumnType("text");
 
@@ -341,6 +347,9 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("sgsttotal")
                         .HasColumnType("numeric");
+
+                    b.Property<int?>("status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("subtotal")
                         .HasColumnType("numeric");
@@ -488,6 +497,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("company")
                         .HasColumnType("text");
 
+                    b.Property<string>("contactpersonname")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("discounttotal")
                         .HasColumnType("numeric");
 
@@ -505,6 +517,9 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("net")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("phoneno")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("purchasebilldate")
                         .HasColumnType("timestamp with time zone");
@@ -527,6 +542,9 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("sgsttotal")
                         .HasColumnType("numeric");
+
+                    b.Property<int?>("status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("subtotal")
                         .HasColumnType("numeric");
@@ -756,6 +774,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("company")
                         .HasColumnType("text");
 
+                    b.Property<string>("contactpersonname")
+                        .HasColumnType("text");
+
                     b.Property<string>("deliveryaddress")
                         .IsRequired()
                         .HasColumnType("text");
@@ -797,6 +818,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("payTerm")
                         .HasColumnType("text");
 
+                    b.Property<string>("phoneno")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("pkRate")
                         .HasColumnType("numeric");
 
@@ -828,6 +852,9 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("sgstTotal")
                         .HasColumnType("numeric");
+
+                    b.Property<int?>("status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("subTotal")
                         .HasColumnType("numeric");
@@ -1051,6 +1078,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("company")
                         .HasColumnType("text");
 
+                    b.Property<string>("contactpersonname")
+                        .HasColumnType("text");
+
                     b.Property<string>("deliveryaddress")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1089,6 +1119,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("payTerm")
                         .HasColumnType("text");
 
+                    b.Property<string>("phoneno")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("pkRate")
                         .HasColumnType("numeric");
 
@@ -1123,6 +1156,9 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("sgstTotal")
                         .HasColumnType("numeric");
+
+                    b.Property<int?>("status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("subTotal")
                         .HasColumnType("numeric");
@@ -1315,6 +1351,85 @@ namespace AuggitAPIServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("vSGrnDetails");
+                });
+
+            modelBuilder.Entity("AuggitAPIServer.Model.MASTER.AccountMaster.DayBook", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("branch")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("credit_amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("debit_amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("entry_type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("fy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("particulars")
+                        .HasColumnType("text");
+
+                    b.Property<string>("vch_no")
+                        .HasColumnType("text");
+
+                    b.Property<string>("vch_type")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.ToTable("DayBooks");
+                });
+
+            modelBuilder.Entity("AuggitAPIServer.Model.MASTER.AccountMaster.mAdmin", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("created_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("is_verified")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("mobile_no")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("updated_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("user_name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.ToTable("mAdmins");
                 });
 
             modelBuilder.Entity("AuggitAPIServer.Model.MASTER.AccountMaster.mDeliveryAddress", b =>
@@ -1765,6 +1880,17 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Website")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("branch")
+                        .HasColumnType("text");
+
+                    b.Property<string>("imageurl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("officeaddress")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -2220,6 +2346,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("company")
                         .HasColumnType("text");
 
+                    b.Property<string>("contactpersonname")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("discountTotal")
                         .HasColumnType("numeric");
 
@@ -2245,6 +2374,9 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("payTerm")
+                        .HasColumnType("text");
+
+                    b.Property<string>("phoneno")
                         .HasColumnType("text");
 
                     b.Property<decimal>("pkRate")
@@ -2278,6 +2410,9 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<decimal>("sgstTotal")
                         .HasColumnType("numeric");
+
+                    b.Property<int?>("status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("subTotal")
                         .HasColumnType("numeric");
@@ -2429,6 +2564,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("company")
                         .HasColumnType("text");
 
+                    b.Property<string>("contactpersonname")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("discountTotal")
                         .HasColumnType("numeric");
 
@@ -2454,6 +2592,9 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("payTerm")
+                        .HasColumnType("text");
+
+                    b.Property<string>("phoneno")
                         .HasColumnType("text");
 
                     b.Property<decimal>("pkRate")
@@ -2486,6 +2627,9 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<int>("spoid")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("status")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("subTotal")
@@ -2758,6 +2902,12 @@ namespace AuggitAPIServer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ackdate")
+                        .HasColumnType("text");
+
+                    b.Property<string>("acknumber")
+                        .HasColumnType("text");
+
                     b.Property<string>("branch")
                         .HasColumnType("text");
 
@@ -2768,6 +2918,9 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("company")
+                        .HasColumnType("text");
+
+                    b.Property<string>("contactpersonname")
                         .HasColumnType("text");
 
                     b.Property<string>("customercode")
@@ -2808,10 +2961,16 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("invoicecopy")
                         .HasColumnType("text");
 
+                    b.Property<string>("irn")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("net")
                         .HasColumnType("numeric");
 
                     b.Property<string>("payTerm")
+                        .HasColumnType("text");
+
+                    b.Property<string>("phoneno")
                         .HasColumnType("text");
 
                     b.Property<decimal>("pkRate")
@@ -2848,6 +3007,9 @@ namespace AuggitAPIServer.Migrations
 
                     b.Property<string>("sono")
                         .HasColumnType("text");
+
+                    b.Property<int?>("status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("subTotal")
                         .HasColumnType("numeric");
@@ -3061,6 +3223,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("company")
                         .HasColumnType("text");
 
+                    b.Property<string>("contactpersonname")
+                        .HasColumnType("text");
+
                     b.Property<string>("customercode")
                         .HasColumnType("text");
 
@@ -3105,6 +3270,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("payTerm")
                         .HasColumnType("text");
 
+                    b.Property<string>("phoneno")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("pkRate")
                         .HasColumnType("numeric");
 
@@ -3138,6 +3306,9 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("ssid")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("status")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("subTotal")
@@ -3548,6 +3719,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("company")
                         .HasColumnType("text");
 
+                    b.Property<string>("contactpersonname")
+                        .HasColumnType("text");
+
                     b.Property<string>("customercode")
                         .HasColumnType("text");
 
@@ -3585,6 +3759,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("payTerm")
                         .HasColumnType("text");
 
+                    b.Property<string>("phoneno")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("pkRate")
                         .HasColumnType("numeric");
 
@@ -3620,6 +3797,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("sotype")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("subTotal")
                         .HasColumnType("numeric");
@@ -3770,6 +3950,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("company")
                         .HasColumnType("text");
 
+                    b.Property<string>("contactpersonname")
+                        .HasColumnType("text");
+
                     b.Property<string>("customercode")
                         .HasColumnType("text");
 
@@ -3807,6 +3990,9 @@ namespace AuggitAPIServer.Migrations
                     b.Property<string>("payTerm")
                         .HasColumnType("text");
 
+                    b.Property<string>("phoneno")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("pkRate")
                         .HasColumnType("numeric");
 
@@ -3841,6 +4027,9 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("ssoid")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("status")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("subTotal")

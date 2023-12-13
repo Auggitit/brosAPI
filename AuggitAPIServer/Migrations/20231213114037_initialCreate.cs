@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AuggitAPIServer.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,6 +58,26 @@ namespace AuggitAPIServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DayBooks",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    particulars = table.Column<string>(type: "text", nullable: true),
+                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    vch_no = table.Column<string>(type: "text", nullable: true),
+                    vch_type = table.Column<string>(type: "text", nullable: true),
+                    debit_amount = table.Column<decimal>(type: "numeric", nullable: true),
+                    credit_amount = table.Column<decimal>(type: "numeric", nullable: true),
+                    entry_type = table.Column<string>(type: "text", nullable: false),
+                    branch = table.Column<string>(type: "text", nullable: true),
+                    fy = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DayBooks", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "defaultaccounts",
                 columns: table => new
                 {
@@ -69,6 +89,21 @@ namespace AuggitAPIServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_defaultaccounts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FinancialYears",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Fy = table.Column<string>(type: "text", nullable: false),
+                    Year = table.Column<string>(type: "text", nullable: false),
+                    DateFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DateTo = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FinancialYears", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,6 +152,25 @@ namespace AuggitAPIServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "mAdmins",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_name = table.Column<string>(type: "text", nullable: false),
+                    password = table.Column<string>(type: "text", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    mobile_no = table.Column<string>(type: "text", nullable: false),
+                    is_verified = table.Column<bool>(type: "boolean", nullable: false),
+                    token = table.Column<string>(type: "text", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_mAdmins", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "mCategory",
                 columns: table => new
                 {
@@ -146,6 +200,8 @@ namespace AuggitAPIServer.Migrations
                     State = table.Column<string>(type: "text", nullable: false),
                     StateCode = table.Column<string>(type: "text", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
+                    officeaddress = table.Column<string>(type: "text", nullable: false),
+                    imageurl = table.Column<string>(type: "text", nullable: false),
                     Pincode = table.Column<string>(type: "text", nullable: false),
                     Mobile = table.Column<string>(type: "text", nullable: false),
                     Telephone = table.Column<string>(type: "text", nullable: false),
@@ -179,7 +235,8 @@ namespace AuggitAPIServer.Migrations
                     EnableITExmLimitforTDSDeduction = table.Column<string>(type: "text", nullable: false),
                     EnableTDSForStockItems = table.Column<string>(type: "text", nullable: false),
                     RCreatedDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    RStatus = table.Column<string>(type: "text", nullable: false)
+                    RStatus = table.Column<string>(type: "text", nullable: false),
+                    branch = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -812,7 +869,10 @@ namespace AuggitAPIServer.Migrations
                     branch = table.Column<string>(type: "text", nullable: true),
                     fy = table.Column<string>(type: "text", nullable: true),
                     remarks = table.Column<string>(type: "text", nullable: true),
-                    invoicecopy = table.Column<string>(type: "text", nullable: true)
+                    invoicecopy = table.Column<string>(type: "text", nullable: true),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -885,9 +945,12 @@ namespace AuggitAPIServer.Migrations
                     vchstatus = table.Column<string>(type: "text", nullable: false),
                     company = table.Column<string>(type: "text", nullable: true),
                     branch = table.Column<string>(type: "text", nullable: true),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
                     fy = table.Column<string>(type: "text", nullable: true),
                     remarks = table.Column<string>(type: "text", nullable: true),
-                    invoicecopy = table.Column<string>(type: "text", nullable: true)
+                    invoicecopy = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -978,7 +1041,10 @@ namespace AuggitAPIServer.Migrations
                     salerefname = table.Column<string>(type: "text", nullable: false),
                     vchtype = table.Column<string>(type: "text", nullable: false),
                     saleaccount = table.Column<string>(type: "text", nullable: false),
-                    deliveryaddress = table.Column<string>(type: "text", nullable: false)
+                    deliveryaddress = table.Column<string>(type: "text", nullable: false),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1112,7 +1178,10 @@ namespace AuggitAPIServer.Migrations
                     inValue = table.Column<decimal>(type: "numeric", nullable: false),
                     tcsRate = table.Column<decimal>(type: "numeric", nullable: false),
                     tcsValue = table.Column<decimal>(type: "numeric", nullable: false),
-                    potype = table.Column<string>(type: "text", nullable: false)
+                    potype = table.Column<string>(type: "text", nullable: false),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1203,7 +1272,13 @@ namespace AuggitAPIServer.Migrations
                     salerefname = table.Column<string>(type: "text", nullable: false),
                     vchtype = table.Column<string>(type: "text", nullable: false),
                     saleaccount = table.Column<string>(type: "text", nullable: false),
-                    deliveryaddress = table.Column<string>(type: "text", nullable: false)
+                    deliveryaddress = table.Column<string>(type: "text", nullable: false),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
+                    irn = table.Column<string>(type: "text", nullable: true),
+                    acknumber = table.Column<string>(type: "text", nullable: true),
+                    ackdate = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1317,7 +1392,10 @@ namespace AuggitAPIServer.Migrations
                     vchtype = table.Column<string>(type: "text", nullable: false),
                     saleaccount = table.Column<string>(type: "text", nullable: false),
                     accountname = table.Column<string>(type: "text", nullable: false),
-                    deliveryaddress = table.Column<string>(type: "text", nullable: false)
+                    deliveryaddress = table.Column<string>(type: "text", nullable: false),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1425,7 +1503,10 @@ namespace AuggitAPIServer.Migrations
                     sotype = table.Column<string>(type: "text", nullable: false),
                     closingValue = table.Column<decimal>(type: "numeric", nullable: false),
                     salerefname = table.Column<string>(type: "text", nullable: false),
-                    deliveryaddress = table.Column<string>(type: "text", nullable: false)
+                    deliveryaddress = table.Column<string>(type: "text", nullable: false),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1507,7 +1588,10 @@ namespace AuggitAPIServer.Migrations
                     inValue = table.Column<decimal>(type: "numeric", nullable: false),
                     tcsRate = table.Column<decimal>(type: "numeric", nullable: false),
                     tcsValue = table.Column<decimal>(type: "numeric", nullable: false),
-                    potype = table.Column<string>(type: "text", nullable: false)
+                    potype = table.Column<string>(type: "text", nullable: false),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1598,7 +1682,10 @@ namespace AuggitAPIServer.Migrations
                     salerefname = table.Column<string>(type: "text", nullable: false),
                     vchtype = table.Column<string>(type: "text", nullable: false),
                     saleaccount = table.Column<string>(type: "text", nullable: false),
-                    deliveryaddress = table.Column<string>(type: "text", nullable: false)
+                    deliveryaddress = table.Column<string>(type: "text", nullable: false),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1705,7 +1792,10 @@ namespace AuggitAPIServer.Migrations
                     sotype = table.Column<string>(type: "text", nullable: false),
                     closingValue = table.Column<decimal>(type: "numeric", nullable: false),
                     salerefname = table.Column<string>(type: "text", nullable: false),
-                    deliveryaddress = table.Column<string>(type: "text", nullable: false)
+                    deliveryaddress = table.Column<string>(type: "text", nullable: false),
+                    contactpersonname = table.Column<string>(type: "text", nullable: true),
+                    phoneno = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1761,13 +1851,22 @@ namespace AuggitAPIServer.Migrations
                 name: "ConsDetails");
 
             migrationBuilder.DropTable(
+                name: "DayBooks");
+
+            migrationBuilder.DropTable(
                 name: "defaultaccounts");
+
+            migrationBuilder.DropTable(
+                name: "FinancialYears");
 
             migrationBuilder.DropTable(
                 name: "GstData");
 
             migrationBuilder.DropTable(
                 name: "HSNModels");
+
+            migrationBuilder.DropTable(
+                name: "mAdmins");
 
             migrationBuilder.DropTable(
                 name: "mCategory");
