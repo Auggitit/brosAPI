@@ -19,6 +19,8 @@ builder.Services.AddCors(options =>
                policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
                policy.WithOrigins("https://auggit.brositecom.com").AllowAnyMethod().AllowAnyHeader();
                policy.WithOrigins("https://auggitdev.brositecom.com").AllowAnyMethod().AllowAnyHeader();
+               policy.WithOrigins("http://auggit.s3-website.ap-south-1.amazonaws.com").AllowAnyMethod().AllowAnyHeader();
+               policy.WithOrigins("https://auggit.s3-website.ap-south-1.amazonaws.com").AllowAnyMethod().AllowAnyHeader();
            });
 });
 
