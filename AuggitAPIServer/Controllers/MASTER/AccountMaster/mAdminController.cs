@@ -154,7 +154,7 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
                     code = 404,
                     Message = "No Datas Found"
                 });
-            mAdmin.password = password;
+            mAdmin.password = Encrypt(password, security_key);
             await _context.SaveChangesAsync();
             return Ok(new
             {
