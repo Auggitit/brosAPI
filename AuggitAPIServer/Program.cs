@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using AuggitAPIServer.Data;
 using BoldReports.Web;
+using AuggitAPIServer.EmailController;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -31,6 +32,8 @@ ReportConfig.DefaultSettings = new ReportSettings().RegisterExtensions(new List<
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddControllers();
+builder.Services.AddScoped<EmailSenderService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

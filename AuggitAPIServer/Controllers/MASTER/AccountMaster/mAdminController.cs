@@ -7,6 +7,9 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using AuggitAPIServer.EmailController;
+using Microsoft.Extensions.Caching.Memory;
+using System.ServiceModel.Channels;
 
 
 namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
@@ -16,28 +19,38 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
     public class mAdminsController : ControllerBase
     {
         private readonly AuggitAPIServerContext _context;
+        private readonly EmailSenderService _emailSender;
+        private readonly IMemoryCache _memoryCache;
+
         public string security_key = "Auggitan_Key@123456";
-        public mAdminsController(AuggitAPIServerContext context)
+        public mAdminsController(AuggitAPIServerContext context, EmailSenderService emailSender, IMemoryCache memoryCache)
         {
             _context = context;
+            _emailSender = emailSender;
+            _memoryCache = memoryCache;
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<mAdmin>> Login(LoginRequest loginRequest)
         {
             var user = await _context.mAdmins.SingleOrDefaultAsync(u =>
-                (u.user_name == loginRequest.Username || u.email == loginRequest.Username) &&
+                (u.email == loginRequest.email) &&
                 u.password == Encrypt(loginRequest.Password, security_key));
 
             if (user == null)
             {
-                return Unauthorized("Invalid username/email or password");
+                return Unauthorized("Invalid email or password");
             }
 
             var token = GenerateJwtToken(user);
             user.token = token;
             await _context.SaveChangesAsync();
-            return Ok(user);
+            return Ok(new
+            {
+                code = 200,
+                Message = "Password reset instructions sent successfully.",
+                data = user
+            });
         }
 
         [HttpPost("logout")]
@@ -120,10 +133,6 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletemAdmin(Guid id)
         {
-            if (_context.mAdmins == null)
-            {
-                return NotFound();
-            }
             var mAdmin = await _context.mAdmins.FindAsync(id);
             if (mAdmin == null)
             {
@@ -134,6 +143,77 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdatemAdmin(Guid id, string password)
+        {
+            var mAdmin = await _context.mAdmins.FindAsync(id);
+            if (mAdmin == null)
+                return NotFound(new
+                {
+                    code = 404,
+                    Message = "No Datas Found"
+                });
+            mAdmin.password = password;
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                Code = 200,
+                Message = "Password Updated Successfully"
+            });
+        }
+        [HttpPost("sendOtp")]
+        public async Task<IActionResult> SendOtp(ForgotPasswordRequest request)
+        {
+            var user = await _context.mAdmins.SingleOrDefaultAsync(u => u.email == request.email);
+            if (user == null)
+            {
+                return BadRequest(new
+                {
+                    code = 400,
+                    message = "Invalid email address."
+                });
+            }
+            var otp = GenarateRandamnumber().ToString();
+            await _emailSender.SendEmail(request.email, otp);
+            _memoryCache.Set(request.email, otp, TimeSpan.FromMinutes(5)); // Cache the OTP for 5 minutes
+            return Ok(new
+            {
+                Code = 200,
+                Message = "OTP generated and sent successfully."
+            });
+        }
+        [HttpPost("verifyOtp")]
+        public async Task<IActionResult> VerifyOtp(ForgotPasswordRequest request)
+        {
+            var user = await _context.mAdmins.SingleOrDefaultAsync(u => u.email == request.email);
+            if (user == null)
+            {
+                return BadRequest(new
+                {
+                    code = 400,
+                    message = "Invalid email address."
+                });
+            }
+            if (_memoryCache.TryGetValue(request.email, out string storedOtp) && storedOtp == request.otp)
+            {
+                // OTP is valid
+                _memoryCache.Remove(request.email); // Remove the OTP from cache after successful verification
+                return Ok(new
+                {
+                    Code = 200,
+                    Message = "OTP verification successful.",
+                    data = user
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Code = 400,
+                    Message = "Invalid OTP."
+                });
+            }
         }
         private string Encrypt(string plainText, string key)
         {
@@ -199,11 +279,23 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+        public string GenarateRandamnumber()
+        {
+            Random rnd = new Random();
+            string number = rnd.Next(100000, 999999).ToString();
+            return number;
+        }
 
     }
     public class LoginRequest
     {
-        public string Username { get; set; }
+        public string email { get; set; }
         public string Password { get; set; }
+    }
+
+    public class ForgotPasswordRequest
+    {
+        public string email { get; set; }
+        public string? otp { get; set; }
     }
 }
