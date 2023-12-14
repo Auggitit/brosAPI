@@ -20,5 +20,8 @@
         public string RStatus { get; set; } = string.Empty;
         public string itemsku { get; set; }
         public string itemhsn { get; set; }
+        public string branchcode { get; set; }
+        public string companycode { get; set; }
+        public string fy { get; set; }
     }
 }
