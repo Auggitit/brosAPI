@@ -11,7 +11,7 @@
         public string gstApplicable { get; set; }
         public string gstCalculationtype { get; set; }
         public string taxable { get; set; }
-        public decimal gst { get; set; }
+        public string gst { get; set; }
         public decimal cess { get; set; }
         public decimal vat { get; set; }
         public string typeofSupply { get; set; }
@@ -20,8 +20,8 @@
         public string RStatus { get; set; } = string.Empty;
         public string itemsku { get; set; }
         public string itemhsn { get; set; }
-        public string branchcode { get; set; }
-        public string companycode { get; set; }
-        public string fy { get; set; }
+        public string branchcode { get; set; } = string.Empty;
+        public string companycode { get; set; } = string.Empty;
+        public string fy { get; set; } = string.Empty;
     }
 }

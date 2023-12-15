@@ -48,7 +48,7 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
             return Ok(new
             {
                 code = 200,
-                Message = "Password reset instructions sent successfully.",
+                Message = "Login successfully.",
                 data = user
             });
         }
