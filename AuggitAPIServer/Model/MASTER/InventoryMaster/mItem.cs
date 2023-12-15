@@ -11,7 +11,7 @@
         public string gstApplicable { get; set; }
         public string gstCalculationtype { get; set; }
         public string taxable { get; set; }
-        public string gst { get; set; }
+        public decimal gst { get; set; }
         public decimal cess { get; set; }
         public decimal vat { get; set; }
         public string typeofSupply { get; set; }
