@@ -32,7 +32,8 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
             {
                 return NotFound();
             }
-            return await _context.DayBooks.ToListAsync();
+            // return await _context.DayBooks.ToListAsync();
+            return await _context.DayBooks.OrderByDescending(d => d.date).ToListAsync();
         }
 
         // GET: api/DayBooks/5
@@ -108,6 +109,7 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
 
             var rtnData = await _context.DayBooks
                 .Where(d => d.date >= utcFromDate && d.date <= utcToDate)
+                .OrderByDescending(d => d.date)
                 .ToListAsync();
 
             return new JsonResult(rtnData);
