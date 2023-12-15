@@ -151,7 +151,15 @@ namespace AuggitAPIServer.Controllers.Master.GeneralMaster
             {
                 return NotFound();
             }
-
+            var mState = await _context.mState.FindAsync(mCountry.countryname);
+            if (mState != null)
+            {
+                return BadRequest(new
+                {
+                    code = 400,
+                    Message = "This country having imaportant datas"
+                });
+            }
             if (mCountry.RStatus == "A")
             {
                 mCountry.RStatus = "D";

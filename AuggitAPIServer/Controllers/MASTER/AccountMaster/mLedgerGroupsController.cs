@@ -9,6 +9,7 @@ using AuggitAPIServer.Data;
 using AuggitAPIServer.Model.MASTER.AccountMaster;
 using System.DirectoryServices.AccountManagement;
 using Npgsql;
+using System.ServiceModel.Channels;
 
 namespace AuggitAPIServer.Controllers.Master.AccountMaster
 {
@@ -207,7 +208,15 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
             {
                 return NotFound();
             }
-
+            var mLedger = await _context.mLedgers.FindAsync(mLedgerGroups.groupcode);
+            if (mLedger != null)
+            {
+                return BadRequest(new
+                {
+                    code = 400,
+                    Message = "This LedgerGroup having imaportant datas"
+                });
+            }
             if (mLedgerGroup.RStatus == "A")
             {
                 mLedgerGroup.RStatus = "D";
