@@ -12,6 +12,7 @@ using System.Data;
 using Newtonsoft.Json;
 using System.Security.AccessControl;
 using Microsoft.AspNetCore.JsonPatch;
+using System.ServiceModel.Channels;
 
 namespace AuggitAPIServer.Controllers.PO
 {
@@ -225,19 +226,19 @@ namespace AuggitAPIServer.Controllers.PO
 
         [HttpGet]
         [Route("deletePO")]
-        public JsonResult deletePO(string pono, string vtype, string branch, string fy)
+        public async Task<IActionResult> deletePO(string pono, string vtype, string branch, string fy)
         {
-            string query = "delete from public.\"vPO\" where \"pono\" ='" + pono + "' and \"potype\"= '" + vtype + "' and branch='" + branch + "' and fy='" + fy + "' ";
-            int count = 0;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            var po = await _context.vPO.AnyAsync(x => x.pono == pono && x.potype == vtype && x.branch == branch && x.fy == fy);
+            if (po != null)
             {
-                myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                return BadRequest(new
                 {
-                    count = myCommand.ExecuteNonQuery();
-                }
+                    code = 400,
+                    Message = "This PurchaseOrder having imaportant datas"
+                });
             }
-            return new JsonResult(count);
+            _context.Remove(pono);
+            return NoContent();
         }
 
 

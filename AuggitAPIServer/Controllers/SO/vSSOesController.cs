@@ -216,20 +216,21 @@ namespace AuggitAPIServer.Controllers.SO
         }
 
         [HttpGet]
-        [Route("deleteSO")]
-        public JsonResult deleteSO(string sono, string vchtype, string branch, string fy)
+        [Route("deleteSSO")]
+        public async Task<IActionResult> deleteSSO(string sono, string vtype, string branch, string fy)
         {
-            string query = "delete from public.\"vSSO\" where \"sono\" ='" + sono + "' and sotype = '" + vchtype + "'   and branch = '" + branch + "'  and fy = '" + fy + "' ";
-            int count = 0;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            var sPo = await _context.vSSO.AnyAsync(x => x.sono == sono && x.sotype == vtype && x.branch == branch && x.fy == fy);
+            if (sPo != null)
             {
-                myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                return BadRequest(new
                 {
-                    count = myCommand.ExecuteNonQuery();
-                }
+                    code = 400,
+                    Message = "This Service Sales Order having imaportant datas"
+                });
+
             }
-            return new JsonResult(count);
+            _context.Remove(sono);
+            return NoContent();
         }
 
         [HttpGet]

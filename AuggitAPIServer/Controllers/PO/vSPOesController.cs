@@ -267,20 +267,21 @@ namespace AuggitAPIServer.Controllers.PO
             return new JsonResult(JsonConvert.SerializeObject(table));
         }
         [HttpGet]
-        [Route("deletePO")]
-        public JsonResult deletePO(string pono, string vtype, string branch, string fy)
+        [Route("deleteSPO")]
+        public async Task<IActionResult> deleteSPO(string pono, string vtype, string branch, string fy)
         {
-            string query = "delete from public.\"vSPO\" where \"pono\" ='" + pono + "' and \"potype\"= '" + vtype + "' and branch='" + branch + "' and fy='" + fy + "' ";
-            int count = 0;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            var sPo = await _context.vSPO.AnyAsync(x => x.pono == pono && x.potype == vtype && x.branch == branch && x.fy == fy);
+            if (sPo != null)
             {
-                myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                return BadRequest(new
                 {
-                    count = myCommand.ExecuteNonQuery();
-                }
+                    code = 400,
+                    Message = "This Service PurchaseOrder having imaportant datas"
+                });
+
             }
-            return new JsonResult(count);
+            _context.Remove(pono);
+            return NoContent();
         }
 
     }
