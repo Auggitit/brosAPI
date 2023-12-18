@@ -89,7 +89,7 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
             }
 
             rtnData = Common.GetGraphData(globalFilterId, rtnData);
-            rtnData = Common.GetResultCount(rtnData);
+            rtnData = Common.GetResultCount(_context,"vGrn",rtnData);
 
             return new JsonResult(rtnData);
         }

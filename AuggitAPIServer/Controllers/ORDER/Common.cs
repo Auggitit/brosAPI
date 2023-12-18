@@ -72,25 +72,31 @@ namespace AuggitAPIServer.Controllers.ORDER
             }
             return list;
         }
-        public static RtnData GetResultCount(RtnData rtnData)
+        public static RtnData GetResultCount(AuggitAPIServerContext context, string DataTable, RtnData rtnData)
         {
-            rtnData.Total = rtnData.Result.Count();
-            rtnData.Pending = rtnData.Result
-                .Count(x =>
-                    (string.IsNullOrEmpty(x.ordered) ? 0 : Math.Round(double.Parse(x.ordered))) -
-                    (string.IsNullOrEmpty(x.received) ? 0 : Math.Round(double.Parse(x.received))) > 0);
-            rtnData.Completed = rtnData.Result
-                .Count(x =>
-                    (string.IsNullOrEmpty(x.ordered) ? 0 : Math.Round(double.Parse(x.ordered))) -
-                    (string.IsNullOrEmpty(x.received) ? 0 : Math.Round(double.Parse(x.received))) <= 0);
-            rtnData.Cancelled = byte.MinValue;
+            var query = "SELECT " +
+                "COUNT(*) AS total," +
+                "COUNT(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS pending," +
+                "COUNT(CASE WHEN status = 2 THEN 1 ELSE 0 END) AS completed," +
+                "COUNT(CASE WHEN status = 3 THEN 1 ELSE 0 END) AS cancelled," +
+                "COALESCE(SUM(CAST(net AS decimal)), 0) AS totalAmounts,"+
+                "ROUND((COALESCE(SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END), 0) * 100.0 / COALESCE(NULLIF(COUNT(*), 0), 1)), 2) AS pendingPercentage,"+
+                "ROUND((COALESCE(SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END), 0) * 100.0 / COALESCE(NULLIF(COUNT(*), 0), 1)), 2) AS completedPercentage,"+
+                "ROUND((COALESCE(SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END), 0) * 100.0 / COALESCE(NULLIF(COUNT(*), 0), 1)), 2) AS cancelledPercentage"+
+            $" FROM \"{DataTable}\"";
+            Console.WriteLine(query);
+            var dt = ExecuteQuery(context, query);
 
-            rtnData.PendingPercent = !double.IsNaN((double)rtnData.Pending / rtnData.Total * 100)
-                ? $"{(double)rtnData.Pending / rtnData.Total * 100}%" : "0% ";
-            rtnData.CompletedPercent = !double.IsNaN((double)rtnData.Completed / rtnData.Total * 100)
-                ? $"{(double)rtnData.Completed / rtnData.Total * 100}%" : "0% ";
-            rtnData.CancelledPercent = !double.IsNaN((double)rtnData.Cancelled / rtnData.Total * 100)
-                ? $"{(double)rtnData.Cancelled / rtnData.Total * 100}%" : "0% ";
+            rtnData.Total = (long)dt.Rows[0][0] != null ? (long)dt.Rows[0][0] : 0;
+            rtnData.Pending = (long)dt.Rows[0][1] != null ? (long)dt.Rows[0][1] : 0;
+            rtnData.Completed = (long)dt.Rows[0][2] != null ? (long)dt.Rows[0][2] : 0;
+            rtnData.Cancelled = (long)dt.Rows[0][3] != null ? (long)dt.Rows[0][3] : 0;
+            rtnData.TotalAmounts = Convert.ToDouble(dt.Rows[0][4]);
+
+            // Format percentages without casting to int
+            rtnData.PendingPercent = $"{dt.Rows[0][5]:0.##}%";
+            rtnData.CompletedPercent = $"{dt.Rows[0][6]:0.##}%";
+            rtnData.CancelledPercent = $"{dt.Rows[0][7]:0.##}%";
 
             rtnData.TotalAmounts = rtnData.Result.Sum(x =>
             {
@@ -104,6 +110,8 @@ namespace AuggitAPIServer.Controllers.ORDER
 
             return rtnData;
         }
+
+
 
         public static List<dynamic> GetProducts(string getProductsQuery, AuggitAPIServerContext _context)
         {
@@ -332,10 +340,10 @@ namespace AuggitAPIServer.Controllers.ORDER
     }
     public class RtnData
     {
-        public int Total { get; set; }
-        public int Pending { get; set; }
-        public int Completed { get; set; }
-        public int Cancelled { get; set; }
+        public long Total { get; set; }
+        public long Pending { get; set; }
+        public long Completed { get; set; }
+        public long Cancelled { get; set; }
         public string PendingPercent { get; set; }
         public string CompletedPercent { get; set; }
         public string CancelledPercent { get; set; }

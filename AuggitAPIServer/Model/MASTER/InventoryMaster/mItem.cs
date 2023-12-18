@@ -17,11 +17,11 @@
         public string typeofSupply { get; set; }
         public decimal rateofDuty { get; set; }
         public DateTime RCreatedDateTime { get; set; }
-        public string RStatus { get; set; } = string.Empty;
+        public string RStatus { get; set; }
         public string itemsku { get; set; }
         public string itemhsn { get; set; }
-        public string branchcode { get; set; } = string.Empty;
-        public string companycode { get; set; } = string.Empty;
-        public string fy { get; set; } = string.Empty;
+        public string branchcode { get; set; } = string.Empty; 
+        public string companycode { get; set; } = string.Empty; 
+        public string fy { get; set; } = string.Empty; 
     }
 }

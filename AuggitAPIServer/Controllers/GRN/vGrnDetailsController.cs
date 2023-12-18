@@ -113,9 +113,18 @@ namespace AuggitAPIServer.Controllers.GRN
         [Route("insertBulk")]
         public async Task<ActionResult<vGrnDetails>> insertBulk(List<vGrnDetails> vGrnDetails)
         {
+            var status = false;
+            var vpono = vGrnDetails.Select(x => x.pono).FirstOrDefault();
             foreach (var row in vGrnDetails)
             {
+                
                 _context.vGrnDetails.Add(row);
+                await _context.SaveChangesAsync();
+            }
+            if (status == true)
+            {
+                var vpo = _context.vPO.First(x => x.pono == vpono);
+                vpo.status = 2;
                 await _context.SaveChangesAsync();
             }
             return CreatedAtAction("GetvGrnDetails", vGrnDetails);
@@ -124,9 +133,9 @@ namespace AuggitAPIServer.Controllers.GRN
 
         [HttpGet]
         [Route("deleteGRNDetails")]
-        public JsonResult deleteGRNDetails(string invno, string vtype ,string branch , string fy )
+        public JsonResult deleteGRNDetails(string invno, string vtype, string branch, string fy)
         {
-            string query = "delete from public.\"vGrnDetails\" where \"grnno\" ='" + invno + "' and vchtype='" + vtype + "' and branch='" + branch + "' and fy='" + fy +"' ";
+            string query = "delete from public.\"vGrnDetails\" where \"grnno\" ='" + invno + "' and vchtype='" + vtype + "' and branch='" + branch + "' and fy='" + fy + "' ";
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
