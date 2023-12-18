@@ -126,7 +126,7 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         public JsonResult getItems()
         {
             string query = "SELECT a.\"Id\", a.itemcode, a.itemname, a.itemsku, a.itemhsn, a.gst, a.cess, a.vat, a.\"typeofSupply\", " +
-                                  "b.groupname, a.itemunder AS groupcode, c.catname, a.itemcategory AS catcode, d.uomname uom, a.uom AS uomcode " +
+                                  "b.groupname, a.itemunder AS groupcode, c.catname, a.itemcategory AS catcode, d.uomname uom, a.uom AS uomcode,a.\"RStatus\" rstatus " +
                                   "FROM public.\"mItem\" a " +
                                   "JOIN public.\"mItemgroup\" b ON a.itemunder = b.groupcode " +
                                   "JOIN public.\"mCategory\" c ON a.itemcategory = c.catcode " +
