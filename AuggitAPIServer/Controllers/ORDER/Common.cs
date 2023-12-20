@@ -76,9 +76,9 @@ namespace AuggitAPIServer.Controllers.ORDER
         {
             var query = "SELECT " +
                 "COUNT(*) AS total," +
-                "COUNT(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS pending," +
-                "COUNT(CASE WHEN status = 2 THEN 1 ELSE 0 END) AS completed," +
-                "COUNT(CASE WHEN status = 3 THEN 1 ELSE 0 END) AS cancelled," +
+                "SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS pending," +
+                "SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) AS completed," +
+                "SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END) AS cancelled," +
                 "COALESCE(SUM(CAST(net AS decimal)), 0) AS totalAmounts,"+
                 "ROUND((COALESCE(SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END), 0) * 100.0 / COALESCE(NULLIF(COUNT(*), 0), 1)), 2) AS pendingPercentage,"+
                 "ROUND((COALESCE(SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END), 0) * 100.0 / COALESCE(NULLIF(COUNT(*), 0), 1)), 2) AS completedPercentage,"+
