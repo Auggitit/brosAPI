@@ -228,16 +228,17 @@ namespace AuggitAPIServer.Controllers.PO
         [Route("deletePO")]
         public async Task<IActionResult> deletePO(string pono, string vtype, string branch, string fy)
         {
-            var po = await _context.vPO.AnyAsync(x => x.pono == pono && x.potype == vtype && x.branch == branch && x.fy == fy);
-            if (po != null)
+            var po = await _context.vPO.FirstOrDefaultAsync(x => x.pono == pono && x.potype == vtype && x.branch == branch && x.fy == fy);
+            if (po == null)
             {
                 return BadRequest(new
                 {
                     code = 400,
-                    Message = "This PurchaseOrder having imaportant datas"
+                    Message = "no data found"
                 });
             }
-            _context.Remove(pono);
+            _context.vPO.Remove(po);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 

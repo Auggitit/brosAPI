@@ -194,22 +194,22 @@ namespace AuggitAPIServer.Controllers.PO
             return new JsonResult(polist);
         }
 
-        [HttpGet]
-        [Route("deleteSPO")]
-        public JsonResult deleteSPO(int pono, string vtype)
-        {
-            string query = "delete from public.\"vSPO\" where \"pono\" ='" + pono + "' and \"potype\"= '" + vtype + "' ";
-            int count = 0;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
-            {
-                myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
-                    count = myCommand.ExecuteNonQuery();
-                }
-            }
-            return new JsonResult(count);
-        }
+        // [HttpGet]
+        // [Route("deleteSPO")]
+        // public JsonResult deleteSPO(int pono, string vtype)
+        // {
+        //     string query = "delete from public.\"vSPO\" where \"pono\" ='" + pono + "' and \"potype\"= '" + vtype + "' ";
+        //     int count = 0;
+        //     using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+        //     {
+        //         myCon.Open();
+        //         using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+        //         {
+        //             count = myCommand.ExecuteNonQuery();
+        //         }
+        //     }
+        //     return new JsonResult(count);
+        // }
 
         [HttpGet]
         [Route("deleteSPODetails")]
@@ -270,17 +270,18 @@ namespace AuggitAPIServer.Controllers.PO
         [Route("deleteSPO")]
         public async Task<IActionResult> deleteSPO(string pono, string vtype, string branch, string fy)
         {
-            var sPo = await _context.vSPO.AnyAsync(x => x.pono == pono && x.potype == vtype && x.branch == branch && x.fy == fy);
-            if (sPo != null)
+            var sPo = await _context.vSPO.FirstOrDefaultAsync(x => x.pono == pono && x.potype == vtype && x.branch == branch && x.fy == fy);
+            if (sPo == null)
             {
                 return BadRequest(new
                 {
                     code = 400,
-                    Message = "This Service PurchaseOrder having imaportant datas"
+                    Message = "No data Found"
                 });
 
             }
-            _context.Remove(pono);
+            _context.vSPO.Remove(sPo);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
