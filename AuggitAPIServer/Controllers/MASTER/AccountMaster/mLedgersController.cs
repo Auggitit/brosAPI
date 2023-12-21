@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AuggitAPIServer.Data;
 using AuggitAPIServer.Model.MASTER.AccountMaster;
 using AuggitAPIServer.Model.MASTER.InventoryMaster;
+using Npgsql;
 
 namespace AuggitAPIServer.Controllers.Master.AccountMaster
 {

@@ -149,7 +149,6 @@ namespace AuggitAPIServer.Controllers.MASTER.InventoryMaster
 
                         _context.HSNModels.Remove(HSNModels);
                         await _context.SaveChangesAsync();
-
                         return NoContent();
                     }
                 }
