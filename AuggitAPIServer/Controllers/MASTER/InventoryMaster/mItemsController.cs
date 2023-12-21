@@ -92,29 +92,29 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
             return CreatedAtAction("GetmItem", new { id = mItem.Id }, mItem);
         }
 
-        // DELETE: api/mItems/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletemItem(Guid id)
-        {
-            var mItem = await _context.mItem.FindAsync(id);
-            if (mItem == null)
-            {
-                return NotFound();
-            }
+        // // DELETE: api/mItems/5
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeletemItem(Guid id)
+        // {
+        //     var mItem = await _context.mItem.FindAsync(id);
+        //     if (mItem == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            if (mItem.RStatus == "A")
-            {
-                mItem.RStatus = "D";
-            }
-            else
-            {
-                mItem.RStatus = "A";
-            }
-            //_context.mItem.Remove(mItem);
-            await _context.SaveChangesAsync();
+        //     if (mItem.RStatus == "A")
+        //     {
+        //         mItem.RStatus = "D";
+        //     }
+        //     else
+        //     {
+        //         mItem.RStatus = "A";
+        //     }
+        //     //_context.mItem.Remove(mItem);
+        //     await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
         private bool mItemExists(Guid id)
         {
@@ -225,18 +225,36 @@ Console.WriteLine(query);
         public async Task<IActionResult> DeleteMItemsDATA(Guid id)
         {
             var Item = await _context.mItem.FindAsync(id);
-            if (Item == null)
+            string query = " select * from stockview where productcode='"+ Item.itemcode + "' ";
+            int count = 0;
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
-                return NotFound();
-            }
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    count = myCommand.ExecuteNonQuery();
+                    if (count > 0)
+                    {
+                        return Ok("Ledger Record Cannot be Deleted");
+                    }
+                    else
+                    {
+                        
+                        if (Item == null)
+                        {
+                            return NotFound();
+                        }
 
-            if (Item.RStatus == "A")
-            {
-                Item.RStatus = "D";
-            }
-            await _context.SaveChangesAsync();
+                        if (Item.RStatus == "A")
+                        {
+                            Item.RStatus = "D";
+                        }
+                        await _context.SaveChangesAsync();
 
-            return NoContent();
+                        return NoContent();
+                    }
+                }
+            }
         }
 
 

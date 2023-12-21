@@ -84,29 +84,29 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
             return CreatedAtAction("GetmUom", new { id = mUom.Id }, mUom);
         }
 
-        // DELETE: api/mUoms/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletemUom(Guid id)
-        {
-            var mUom = await _context.mUom.FindAsync(id);
-            if (mUom == null)
-            {
-                return NotFound();
-            }
+        // // DELETE: api/mUoms/5
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeletemUom(Guid id)
+        // {
+        //     var mUom = await _context.mUom.FindAsync(id);
+        //     if (mUom == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            if (mUom.RStatus == "A")
-            {
-                mUom.RStatus = "D";
-            }
-            else
-            {
-                mUom.RStatus = "A";
-            }
-            //_context.mUom.Remove(mUom);
-            await _context.SaveChangesAsync();
+        //     if (mUom.RStatus == "A")
+        //     {
+        //         mUom.RStatus = "D";
+        //     }
+        //     else
+        //     {
+        //         mUom.RStatus = "A";
+        //     }
+        //     //_context.mUom.Remove(mUom);
+        //     await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
         private bool mUomExists(Guid id)
         {
@@ -177,22 +177,40 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         public async Task<IActionResult> Delete_UOMData(Guid id)
         {
             var mUom = await _context.mUom.FindAsync(id);
-            if (mUom == null)
+            string query = "select * from public.\"mItem\" where \"uom\" ='" + mUom.uomcode + "' ";
+            int count = 0;
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
-                return NotFound();
-            }
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    count = myCommand.ExecuteNonQuery();
+                    if (count > 0)
+                    {
+                        return Ok("HSN Record Cannot be Deleted");
+                    }
+                    else
+                    {
+                        
+                        if (mUom == null)
+                        {
+                            return NotFound();
+                        }
 
-            if (mUom.RStatus == "A")
-            {
-                mUom.RStatus = "D";
-            }
-            else
-            {
-                mUom.RStatus = "A";
-            }
-            await _context.SaveChangesAsync();
+                        if (mUom.RStatus == "A")
+                        {
+                            mUom.RStatus = "D";
+                        }
+                        else
+                        {
+                            mUom.RStatus = "A";
+                        }
+                        await _context.SaveChangesAsync();
 
-            return NoContent();
+                        return NoContent();
+                    }
+                }
+            }
         }
     }
 }

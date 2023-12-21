@@ -87,30 +87,30 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
             return CreatedAtAction("GetmLedgerGroup", new { id = mLedgerGroup.Id }, mLedgerGroup);
         }
 
-        // DELETE: api/mLedgerGroups/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletemLedgerGroup(Guid id)
-        {
-            var mLedgerGroup = await _context.mLedgerGroup.FindAsync(id);
-            if (mLedgerGroup == null)
-            {
-                return NotFound();
-            }
+        // // DELETE: api/mLedgerGroups/5
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeletemLedgerGroup(Guid id)
+        // {
+        //     var mLedgerGroup = await _context.mLedgerGroup.FindAsync(id);
+        //     if (mLedgerGroup == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            if (mLedgerGroup.RStatus == "A")
-            {
-                mLedgerGroup.RStatus = "D";
-            }
-            else
-            {
-                mLedgerGroup.RStatus = "A";
-            }
+        //     if (mLedgerGroup.RStatus == "A")
+        //     {
+        //         mLedgerGroup.RStatus = "D";
+        //     }
+        //     else
+        //     {
+        //         mLedgerGroup.RStatus = "A";
+        //     }
 
-            //_context.mLedgerGroup.Remove(mLedgerGroup);
-            await _context.SaveChangesAsync();
+        //     //_context.mLedgerGroup.Remove(mLedgerGroup);
+        //     await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
         private bool mLedgerGroupExists(Guid id)
         {
@@ -145,6 +145,7 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
             var sender = "LG" + result.ToString("D4");
             return new JsonResult(sender);
         }
+
         [HttpGet]
         [Route("checkDuplicate")]
         public JsonResult checkDuplicate(string name)
@@ -199,32 +200,32 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
             }
         }
 
-        [HttpPost]
-        [Route("deletemLedgerGroups")]
-        public async Task<IActionResult> deletemLedgerGroups(mLedgerGroup mLedgerGroups)
-        {
-            var mLedgerGroup = await _context.mLedgerGroup.FindAsync(mLedgerGroups.Id);
-            if (mLedgerGroup == null)
-            {
-                return NotFound();
-            }
-            var mLedger = await _context.mLedgers.FindAsync(mLedgerGroups.groupcode);
-            if (mLedger != null)
-            {
-                return BadRequest(new
-                {
-                    code = 400,
-                    Message = "This LedgerGroup having imaportant datas"
-                });
-            }
-            if (mLedgerGroup.RStatus == "A")
-            {
-                mLedgerGroup.RStatus = "D";
-            }
-            //_context.mLedgerGroup.Remove(mLedgerGroup);
-            await _context.SaveChangesAsync();
+        // [HttpPost]
+        // [Route("deletemLedgerGroups")]
+        // public async Task<IActionResult> deletemLedgerGroups(mLedgerGroup mLedgerGroups)
+        // {
+        //     var mLedgerGroup = await _context.mLedgerGroup.FindAsync(mLedgerGroups.Id);
+        //     if (mLedgerGroup == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //     var mLedger = await _context.mLedgers.FindAsync(mLedgerGroups.groupcode);
+        //     if (mLedger != null)
+        //     {
+        //         return BadRequest(new
+        //         {
+        //             code = 400,
+        //             Message = "This LedgerGroup having imaportant datas"
+        //         });
+        //     }
+        //     if (mLedgerGroup.RStatus == "A")
+        //     {
+        //         mLedgerGroup.RStatus = "D";
+        //     }
+        //     //_context.mLedgerGroup.Remove(mLedgerGroup);
+        //     await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
     }
 }

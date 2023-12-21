@@ -70,25 +70,26 @@ namespace AuggitAPIServer.Controllers.MASTER.InventoryMaster
 
             return CreatedAtAction("GetHsn", new { id = HSNModels.id }, HSNModels);
         }
-        // DELETE: api/sin/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteHsn(Guid id)
-        {
-            var HSNModels = await _context.HSNModels.FindAsync(id);
-            if (HSNModels == null)
-            {
-                return NotFound();
-            }
+        
+        // // DELETE: api/sin/5
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeleteHsn(Guid id)
+        // {
+        //     var HSNModels = await _context.HSNModels.FindAsync(id);
+        //     if (HSNModels == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            _context.HSNModels.Remove(HSNModels);
-            await _context.SaveChangesAsync();
+        //     _context.HSNModels.Remove(HSNModels);
+        //     await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
-        private bool HsnExists(Guid id)
-        {
-            return _context.HSNModels.Any(e => e.id == id);
-        }
+        //     return NoContent();
+        // }
+        // private bool HsnExists(Guid id)
+        // {
+        //     return _context.HSNModels.Any(e => e.id == id);
+        // }
 
         [HttpPost]
         [Route("Update_Hsn")] // Adjust the route according to your API structure
@@ -130,10 +131,30 @@ namespace AuggitAPIServer.Controllers.MASTER.InventoryMaster
             {
                 return NotFound();
             }
-            _context.HSNModels.Remove(HSNModels);
-            await _context.SaveChangesAsync();
 
-            return NoContent();
+            string query = "select * from public.\"mItem\" where \"itemhsn\" ='" + HSNModels.hsn + "' ";
+            int count = 0;
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            {
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    count = myCommand.ExecuteNonQuery();
+                    if (count > 0)
+                    {
+                        return Ok("HSN Record Cannot be Deleted");
+                    }
+                    else
+                    {
+
+                        _context.HSNModels.Remove(HSNModels);
+                        await _context.SaveChangesAsync();
+
+                        return NoContent();
+                    }
+                }
+            }
         }
+
     }
 }

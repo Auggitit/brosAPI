@@ -84,29 +84,29 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
             return CreatedAtAction("GetmCategory", new { id = mCategory.Id }, mCategory);
         }
 
-        // DELETE: api/mCategories/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletemCategory(Guid id)
-        {
-            var mCategory = await _context.mCategory.FindAsync(id);
-            if (mCategory == null)
-            {
-                return NotFound();
-            }
+        // // DELETE: api/mCategories/5
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeletemCategory(Guid id)
+        // {
+        //     var mCategory = await _context.mCategory.FindAsync(id);
+        //     if (mCategory == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            if (mCategory.RStatus == "A")
-            {
-                mCategory.RStatus = "D";
-            }
-            else
-            {
-                mCategory.RStatus = "A";
-            }
-            //_context.mCategory.Remove(mCategory);
-            await _context.SaveChangesAsync();
+        //     if (mCategory.RStatus == "A")
+        //     {
+        //         mCategory.RStatus = "D";
+        //     }
+        //     else
+        //     {
+        //         mCategory.RStatus = "A";
+        //     }
+        //     //_context.mCategory.Remove(mCategory);
+        //     await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
         private bool mCategoryExists(Guid id)
         {
@@ -172,27 +172,45 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
             }
         }
 
-        [HttpGet]
+         [HttpGet]
         [Route("Deletecatdata")]
         public async Task<IActionResult> Deletecatdata(Guid id)
         {
             var mCategory = await _context.mCategory.FindAsync(id);
-            if (mCategory == null)
+            string query = "select * from public.\"mItem\" where \"itemcategory\" ='" + mCategory.catcode + "' ";
+            int count = 0;
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
-                return NotFound();
-            }
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    count = myCommand.ExecuteNonQuery();
+                    if (count > 0)
+                    {
+                        return Ok("Category Record Cannot be Deleted");
+                    }
+                    else
+                    {
+                        
+                        if (mCategory == null)
+                        {
+                            return NotFound();
+                        }
 
-            if (mCategory.RStatus == "A")
-            {
-                mCategory.RStatus = "D";
-            }
-            else
-            {
-                mCategory.RStatus = "A";
-            }
-            await _context.SaveChangesAsync();
+                        if (mCategory.RStatus == "A")
+                        {
+                            mCategory.RStatus = "D";
+                        }
+                        else
+                        {
+                            mCategory.RStatus = "A";
+                        }
+                        await _context.SaveChangesAsync();
 
-            return NoContent();
+                        return NoContent();
+                    }
+                }
+            }
         }
 
     }

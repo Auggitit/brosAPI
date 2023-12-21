@@ -84,29 +84,29 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
             return CreatedAtAction("GetmItemgroup", new { id = mItemgroup.Id }, mItemgroup);
         }
 
-        // DELETE: api/mItemgroups/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletemItemgroup(Guid id)
-        {
-            var mItemgroup = await _context.mItemgroup.FindAsync(id);
-            if (mItemgroup == null)
-            {
-                return NotFound();
-            }
+        // // DELETE: api/mItemgroups/5
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeletemItemgroup(Guid id)
+        // {
+        //     var mItemgroup = await _context.mItemgroup.FindAsync(id);
+        //     if (mItemgroup == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            if (mItemgroup.RStatus == "A")
-            {
-                mItemgroup.RStatus = "D";
-            }
-            else
-            {
-                mItemgroup.RStatus = "A";
-            }
-            //_context.mItemgroup.Remove(mItemgroup);
-            await _context.SaveChangesAsync();
+        //     if (mItemgroup.RStatus == "A")
+        //     {
+        //         mItemgroup.RStatus = "D";
+        //     }
+        //     else
+        //     {
+        //         mItemgroup.RStatus = "A";
+        //     }
+        //     //_context.mItemgroup.Remove(mItemgroup);
+        //     await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
         private bool mItemgroupExists(Guid id)
         {
@@ -172,27 +172,45 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
             }
         }
 
-        [HttpGet]
+       [HttpGet]
         [Route("DeleteMItemsgroupsdata")]
         public async Task<IActionResult> DeleteMItemsgroupsdata(Guid id)
         {
             var Item = await _context.mItemgroup.FindAsync(id);
-            if (Item == null)
+            string query = "select * from public.\"mItem\" where \"itemunder\" ='" + Item.groupcode + "' ";
+            int count = 0;
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
-                return NotFound();
-            }
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    count = myCommand.ExecuteNonQuery();
+                    if (count > 0)
+                    {
+                        return Ok("Category Record Cannot be Deleted");
+                    }
+                    else
+                    {
+                        
+                        if (Item == null)
+                        {
+                            return NotFound();
+                        }
 
-            if (Item.RStatus == "A")
-            {
-                Item.RStatus = "D";
-            }
-            else
-            {
-                Item.RStatus = "A";
-            }
-            await _context.SaveChangesAsync();
+                        if (Item.RStatus == "A")
+                        {
+                            Item.RStatus = "D";
+                        }
+                        else
+                        {
+                            Item.RStatus = "A";
+                        }
+                        await _context.SaveChangesAsync();
 
-            return NoContent();
+                        return NoContent();
+                    }
+                }
+            }
         }
     }
 }

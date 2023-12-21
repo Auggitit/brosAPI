@@ -85,30 +85,30 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
             return CreatedAtAction("GetmLedgers", new { mLedgers.id }, mLedgers);
         }
 
-        // DELETE: api/mLedgers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletemLedgers(Guid id)
-        {
-            var mLedgers = await _context.mLedgers.FindAsync(id);
-            if (mLedgers == null)
-            {
-                return NotFound();
-            }
+        // // DELETE: api/mLedgers/5
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeletemLedgers(Guid id)
+        // {
+        //     var mLedgers = await _context.mLedgers.FindAsync(id);
+        //     if (mLedgers == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            if (mLedgers.RStatus == "A")
-            {
-                mLedgers.RStatus = "D";
-            }
-            else
-            {
-                mLedgers.RStatus = "A";
-            }
+        //     if (mLedgers.RStatus == "A")
+        //     {
+        //         mLedgers.RStatus = "D";
+        //     }
+        //     else
+        //     {
+        //         mLedgers.RStatus = "A";
+        //     }
 
-            //_context.mLedgers.Remove(mLedgers);
-            await _context.SaveChangesAsync();
+        //     //_context.mLedgers.Remove(mLedgers);
+        //     await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
         private bool mLedgersExists(Guid id)
         {
@@ -197,34 +197,35 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
         public async Task<IActionResult> DeleteMledgerData(mLedgers mLedger)
         {
              string query = "select * from public.\"accountentry\" where \"acccode\" ='" + mLedger.LedgerCode + "' ";
-  int count = 0;
-  using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
-  {
-      myCon.Open();
-      using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-      {
-          count = myCommand.ExecuteNonQuery();
-          if (count > 0)
-          {
-              return Ok("Ledger Record Cannot be Deleted");
-          }
-          else
-          {
-              var mLedgers = await _context.mLedgers.FindAsync(mLedger.id);
-              if (mLedgers == null)
-              {
-                  return NotFound();
-              }
-              if (mLedgers.RStatus == "A")
-              {
-                  mLedgers.RStatus = "D";
-              }
-              //_context.mLedgers.Remove(mLedgers);
-              await _context.SaveChangesAsync();
+            int count = 0;
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            {
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    count = myCommand.ExecuteNonQuery();
+                    if (count > 0)
+                    {
+                        return Ok("Ledger Record Cannot be Deleted");
+                    }
+                    else
+                    {
+                        var mLedgers = await _context.mLedgers.FindAsync(mLedger.id);
+                        if (mLedgers == null)
+                        {
+                            return NotFound();
+                        }
+                        if (mLedgers.RStatus == "A")
+                        {
+                            mLedgers.RStatus = "D";
+                        }
+                        //_context.mLedgers.Remove(mLedgers);
+                        await _context.SaveChangesAsync();
 
-              return NoContent();
-          }
-      }  
-        
+                        return NoContent();
+                    }
+                }  
+            }
+        }
     }
 }
