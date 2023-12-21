@@ -3,6 +3,7 @@ using AuggitAPIServer.Model.MASTER.InventoryMaster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace AuggitAPIServer.Controllers.MASTER.InventoryMaster
 {
@@ -60,6 +61,14 @@ namespace AuggitAPIServer.Controllers.MASTER.InventoryMaster
 
             return NoContent();
         }
+
+        private bool HsnExists(Guid id)
+        {
+            return _context.mCategory.Any(e => e.Id == id);
+        }
+
+
+
         [HttpPost]
         public async Task<ActionResult<HSNModel>> PostHsn(HSNModel HSNModels)
         {
