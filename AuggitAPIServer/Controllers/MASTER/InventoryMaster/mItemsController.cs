@@ -23,10 +23,12 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
     public class mItemsController : ControllerBase
     {
         private readonly AuggitAPIServerContext _context;
+        private readonly IConfiguration _configuration;
 
-        public mItemsController(AuggitAPIServerContext context)
+        public mItemsController(AuggitAPIServerContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: api/mItems
@@ -132,7 +134,7 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
                                   "JOIN public.\"mCategory\" c ON a.itemcategory = c.catcode " +
                                   "JOIN public.\"mUom\" d ON a.uom = d.uomcode " +
                                   "WHERE a.\"RStatus\" = 'A' GROUP BY a.\"Id\",a.itemcode,b.groupname,c.catname,d.uomname";
-Console.WriteLine(query);
+            Console.WriteLine(query);
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
 
@@ -225,9 +227,9 @@ Console.WriteLine(query);
         public async Task<IActionResult> DeleteMItemsDATA(Guid id)
         {
             var Item = await _context.mItem.FindAsync(id);
-            string query = " select * from stockview where productcode='"+ Item.itemcode + "' ";
+            string query = " select * from stockview where productcode='" + Item.itemcode + "' ";
             int count = 0;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_configuration.GetConnectionString("con")))
             {
                 myCon.Open();
                 using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
@@ -239,7 +241,7 @@ Console.WriteLine(query);
                     }
                     else
                     {
-                        
+
                         if (Item == null)
                         {
                             return NotFound();
@@ -249,8 +251,11 @@ Console.WriteLine(query);
                         {
                             Item.RStatus = "D";
                         }
+                        else
+                        {
+                            Item.RStatus = "A";
+                        }
                         await _context.SaveChangesAsync();
-
                         return NoContent();
                     }
                 }

@@ -21,7 +21,7 @@
         public string itemsku { get; set; }
         public string itemhsn { get; set; }
         public string branchcode { get; set; } = string.Empty; 
-        public string companycode { get; set; } = string.Empty; 
+        public string? companycode { get; set; } = string.Empty; 
         public string fy { get; set; } = string.Empty; 
     }
 }
