@@ -25,18 +25,10 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         private readonly AuggitAPIServerContext _context;
         private readonly IConfiguration _configuration;
 
-<<<<<<< Updated upstream
         public mItemsController(AuggitAPIServerContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
-=======
-
-        public mItemsController(AuggitAPIServerContext context,IConfiguration configuration)
-        {
-            _context = context;
-            _configuration=configuration;
->>>>>>> Stashed changes
         }
 
         // GET: api/mItems
@@ -251,11 +243,7 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         public async Task<IActionResult> DeleteMItemsDATA(Guid id)
         {
             var Item = await _context.mItem.FindAsync(id);
-<<<<<<< Updated upstream
-            string query = " select * from stockview where productcode='" + Item.itemcode + "' ";
-=======
             string query = " select coalesce(count(productcode),0) from stockview where productcode='" + Item.itemcode + "' ";
->>>>>>> Stashed changes
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_configuration.GetConnectionString("con")))
             {
@@ -270,12 +258,8 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
                         return Ok("Stock Item Record Cannot be Deleted");
                     }
                     else
-<<<<<<< Updated upstream
                     {
 
-=======
-                    {                        
->>>>>>> Stashed changes
                         if (Item == null)
                         {
                             return NotFound();
@@ -293,15 +277,12 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
                             await _context.SaveChangesAsync();
                             return Ok("Restored");
                         }
-<<<<<<< Updated upstream
                         else
                         {
                             Item.RStatus = "A";
                         }
                         await _context.SaveChangesAsync();
                         return NoContent();
-=======
->>>>>>> Stashed changes
                     }
                 }
             }
