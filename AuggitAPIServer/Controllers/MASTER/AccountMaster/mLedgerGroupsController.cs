@@ -116,6 +116,7 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
         {
             return _context.mLedgerGroup.Any(e => e.Id == id);
         }
+
         [HttpGet]
         [Route("getMaxID")]
         public JsonResult GetMaxID()

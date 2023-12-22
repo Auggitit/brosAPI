@@ -126,7 +126,7 @@ namespace AuggitAPIServer.Controllers.STOCKJOURNAL
         [Route("getSalesAccounts")]
         public JsonResult getSalesAccounts()
         {
-            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"GroupCode\" ='29'";
+            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"GroupCode\" ='29' and \"RStatus\"='A' ";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -148,7 +148,7 @@ namespace AuggitAPIServer.Controllers.STOCKJOURNAL
         [Route("getCustomerAccounts")]
         public JsonResult getCustomerAccounts()
         {
-            string query = "select * from public.\"mLedgers\" where \"GroupCode\" ='33'";
+            string query = "select * from public.\"mLedgers\" where \"GroupCode\" ='33' and \"RStatus\"='A' ";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -170,7 +170,7 @@ namespace AuggitAPIServer.Controllers.STOCKJOURNAL
         [Route("getDefaultAccounts")]
         public JsonResult getDefaultAccounts()
         {
-            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\"";
+            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"RStatus\"='A' ";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))

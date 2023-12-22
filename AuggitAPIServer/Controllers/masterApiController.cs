@@ -15,10 +15,12 @@ namespace AuggitAPIServer.Controllers
     {
 
         private readonly AuggitAPIServerContext _context;
+        private readonly IConfiguration _configuration;
 
-        public masterApiController(AuggitAPIServerContext context)
+        public masterApiController(AuggitAPIServerContext context,IConfiguration configuration)
         {
             _context = context;
+            _configuration=configuration;
         }
 
         [HttpGet]
@@ -30,7 +32,7 @@ namespace AuggitAPIServer.Controllers
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
 
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+             using (NpgsqlConnection myCon = new NpgsqlConnection(_configuration.GetConnectionString("con")))
             {
                 myCon.Open();
                 using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))

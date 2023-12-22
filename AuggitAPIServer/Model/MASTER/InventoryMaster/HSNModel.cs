@@ -8,5 +8,6 @@
         public string? branchcode { get; set; }
         public string? companycode { get; set; }
         public string? fy { get; set; }
+
     }
 }

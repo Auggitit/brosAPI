@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AuggitAPIServer.Data;
 using AuggitAPIServer.Model.MASTER.InventoryMaster;
 using Npgsql;
+using System.Data;
 
 namespace AuggitAPIServer.Controllers.Master.InventoryMaster
 {
@@ -16,17 +17,19 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
     public class mItemgroupsController : ControllerBase
     {
         private readonly AuggitAPIServerContext _context;
+        private readonly IConfiguration _configuration;
 
-        public mItemgroupsController(AuggitAPIServerContext context)
+        public mItemgroupsController(AuggitAPIServerContext context,IConfiguration configuration)
         {
             _context = context;
+            _configuration=configuration;
         }
 
         // GET: api/mItemgroups
         [HttpGet]
         public async Task<ActionResult<IEnumerable<mItemgroup>>> GetmItemgroup()
         {
-            return await _context.mItemgroup.ToListAsync();
+            return await _context.mItemgroup.Where(n => n.RStatus == "A").ToListAsync();
         }
 
         // GET: api/mItemgroups/5
@@ -178,17 +181,18 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         public async Task<IActionResult> DeleteMItemsgroupsdata(Guid id)
         {
             var Item = await _context.mItemgroup.FindAsync(id);
-            string query = "select * from public.\"mItem\" where \"itemunder\" ='" + Item.groupcode + "' ";
+            string query = "select coalesce(count(itemunder),0) from public.\"mItem\" where \"itemunder\" ='" + Item.groupcode + "' ";
             int count = 0;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_configuration.GetConnectionString("con")))
             {
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                using (NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, myCon))
                 {
-                    count = myCommand.ExecuteNonQuery();
-                    if (count > 0)
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    if (int.Parse(dt.Rows[0][0].ToString()) > 0)
                     {
-                        return Ok("Category Record Cannot be Deleted");
+                        return Ok("Group Record Cannot be Deleted");
                     }
                     else
                     {
@@ -201,14 +205,15 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
                         if (Item.RStatus == "A")
                         {
                             Item.RStatus = "D";
+                            await _context.SaveChangesAsync();
+                            return Ok("Deleted");
                         }
                         else
                         {
                             Item.RStatus = "A";
-                        }
-                        await _context.SaveChangesAsync();
-
-                        return NoContent();
+                            await _context.SaveChangesAsync();
+                            return Ok("Restored");
+                        }                                              
                     }
                 }
             }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AuggitAPIServer.Data;
 using AuggitAPIServer.Model.MASTER.InventoryMaster;
 using Npgsql;
+using System.Data;
 
 namespace AuggitAPIServer.Controllers.Master.InventoryMaster
 {
@@ -16,17 +17,19 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
     public class mUomsController : ControllerBase
     {
         private readonly AuggitAPIServerContext _context;
+        private readonly IConfiguration _configuration;
 
-        public mUomsController(AuggitAPIServerContext context)
+        public mUomsController(AuggitAPIServerContext context,IConfiguration configuration)
         {
             _context = context;
+            _configuration=configuration;
         }
 
         // GET: api/mUoms
         [HttpGet]
         public async Task<ActionResult<IEnumerable<mUom>>> GetmUom()
         {
-            return await _context.mUom.ToListAsync();
+            return await _context.mUom.Where(n=> n.RStatus == "A").ToListAsync();
         }
 
         // GET: api/mUoms/5
@@ -142,6 +145,7 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
                 return new JsonResult("Found");
             }
         }
+
         [HttpPost]
         [Route("Update_UOMData")] // Adjust the route according to your API structure
         public async Task<IActionResult> Update_UOMData([FromBody] mUom mUom)
@@ -178,21 +182,21 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         public async Task<IActionResult> Delete_UOMData(Guid id)
         {
             var mUom = await _context.mUom.FindAsync(id);
-            string query = "select * from public.\"mItem\" where \"uom\" ='" + mUom.uomcode + "' ";
+            string query = "select coalesce(count(uom),0) from public.\"mItem\" where \"uom\" ='" + mUom.uomcode + "' ";
             int count = 0;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_configuration.GetConnectionString("con")))
             {
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                using (NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, myCon))
                 {
-                    count = myCommand.ExecuteNonQuery();
-                    if (count > 0)
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);                    
+                    if (int.Parse(dt.Rows[0][0].ToString()) > 0)                        
                     {
                         return Ok("HSN Record Cannot be Deleted");
                     }
                     else
-                    {
-                        
+                    {                        
                         if (mUom == null)
                         {
                             return NotFound();
@@ -201,14 +205,15 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
                         if (mUom.RStatus == "A")
                         {
                             mUom.RStatus = "D";
+                            await _context.SaveChangesAsync();
+                            return Ok("Deleted");
                         }
                         else
                         {
                             mUom.RStatus = "A";
-                        }
-                        await _context.SaveChangesAsync();
-
-                        return NoContent();
+                            await _context.SaveChangesAsync();
+                            return Ok("Restored");
+                        }                                                
                     }
                 }
             }

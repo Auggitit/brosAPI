@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AuggitAPIServer.Data;
 using AuggitAPIServer.Model.MASTER.InventoryMaster;
 using Npgsql;
+using System.Data;
 
 namespace AuggitAPIServer.Controllers.Master.InventoryMaster
 {
@@ -16,17 +17,19 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
     public class mCategoriesController : ControllerBase
     {
         private readonly AuggitAPIServerContext _context;
+        private readonly IConfiguration _configuration;
 
-        public mCategoriesController(AuggitAPIServerContext context)
+        public mCategoriesController(AuggitAPIServerContext context,IConfiguration configuration)
         {
             _context = context;
+            _configuration=configuration;
         }
 
         // GET: api/mCategories
         [HttpGet]
         public async Task<ActionResult<IEnumerable<mCategory>>> GetmCategory()
         {
-            return await _context.mCategory.ToListAsync();
+            return await _context.mCategory.Where(n => n.RStatus == "A").ToListAsync();
         }
 
         // GET: api/mCategories/5
@@ -178,21 +181,22 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         public async Task<IActionResult> Deletecatdata(Guid id)
         {
             var mCategory = await _context.mCategory.FindAsync(id);
-            string query = "select * from public.\"mItem\" where \"itemcategory\" ='" + mCategory.catcode + "' ";
+            string query = "select coalesce(count(itemcategory),0) from public.\"mItem\" where \"itemcategory\" ='" + mCategory.catcode + "' ";
             int count = 0;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+             using (NpgsqlConnection myCon = new NpgsqlConnection(_configuration.GetConnectionString("con")))
             {
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                using (NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, myCon))
                 {
-                    count = myCommand.ExecuteNonQuery();
-                    if (count > 0)
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    //count = myCommand.ExecuteNonQuery();
+                    if (int.Parse(dt.Rows[0][0].ToString()) > 0)                        
                     {
                         return Ok("Category Record Cannot be Deleted");
                     }
                     else
-                    {
-                        
+                    {                        
                         if (mCategory == null)
                         {
                             return NotFound();
@@ -201,14 +205,15 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
                         if (mCategory.RStatus == "A")
                         {
                             mCategory.RStatus = "D";
+                            await _context.SaveChangesAsync();
+                            return Ok("Deleted");
                         }
                         else
                         {
                             mCategory.RStatus = "A";
-                        }
-                        await _context.SaveChangesAsync();
-
-                        return NoContent();
+                            await _context.SaveChangesAsync();
+                            return Ok("Restored");
+                        }                                                
                     }
                 }
             }

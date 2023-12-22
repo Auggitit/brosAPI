@@ -25,17 +25,25 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         private readonly AuggitAPIServerContext _context;
         private readonly IConfiguration _configuration;
 
+<<<<<<< Updated upstream
         public mItemsController(AuggitAPIServerContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
+=======
+
+        public mItemsController(AuggitAPIServerContext context,IConfiguration configuration)
+        {
+            _context = context;
+            _configuration=configuration;
+>>>>>>> Stashed changes
         }
 
         // GET: api/mItems
         [HttpGet]
         public async Task<ActionResult<IEnumerable<mItem>>> GetmItem()
         {
-            return await _context.mItem.ToListAsync();
+            return await _context.mItem.Where(n => n.RStatus == "A").ToListAsync();
         }
 
         // GET: api/mItems/5
@@ -81,6 +89,22 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
             }
 
             return NoContent();
+        }
+
+        [HttpGet]
+        [Route("checkDuplicate")]
+        public JsonResult checkDuplicate(string itemname)
+        {
+            var mcat = _context.mItem;
+            var dbvalue = mcat.Where(b => b.itemname.ToLower() == itemname.ToLower()).ToListAsync();
+            if (dbvalue.Result.Count > 0)
+            {
+                return new JsonResult("Found");
+            }
+            else
+            {
+                return new JsonResult("Not Found");
+            }
         }
 
         // POST: api/mItems
@@ -160,7 +184,7 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         [Route("getItemsWitQuery")]
         public JsonResult getItemsWitQuery()
         {
-            string query = "select * from item";
+            string query = "select * from \"mItem\" WHERE \"RStatus\" = 'A' ";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -227,36 +251,57 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
         public async Task<IActionResult> DeleteMItemsDATA(Guid id)
         {
             var Item = await _context.mItem.FindAsync(id);
+<<<<<<< Updated upstream
             string query = " select * from stockview where productcode='" + Item.itemcode + "' ";
+=======
+            string query = " select coalesce(count(productcode),0) from stockview where productcode='" + Item.itemcode + "' ";
+>>>>>>> Stashed changes
             int count = 0;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_configuration.GetConnectionString("con")))
             {
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                using (NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, myCon))
                 {
-                    count = myCommand.ExecuteNonQuery();
-                    if (count > 0)
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    //count = myCommand.ExecuteNonQuery();
+                    if (int.Parse(dt.Rows[0][0].ToString()) > 0)
                     {
-                        return Ok("Ledger Record Cannot be Deleted");
+                        return Ok("Stock Item Record Cannot be Deleted");
                     }
                     else
+<<<<<<< Updated upstream
                     {
 
+=======
+                    {                        
+>>>>>>> Stashed changes
                         if (Item == null)
                         {
                             return NotFound();
                         }
-
+                       
                         if (Item.RStatus == "A")
                         {
                             Item.RStatus = "D";
+                            await _context.SaveChangesAsync();
+                            return Ok("Deleted");
                         }
+                        else
+                        {
+                            Item.RStatus = "A";
+                            await _context.SaveChangesAsync();
+                            return Ok("Restored");
+                        }
+<<<<<<< Updated upstream
                         else
                         {
                             Item.RStatus = "A";
                         }
                         await _context.SaveChangesAsync();
                         return NoContent();
+=======
+>>>>>>> Stashed changes
                     }
                 }
             }

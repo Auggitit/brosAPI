@@ -28,7 +28,7 @@ namespace AuggitAPIServer.Controllers.Master.GeneralMaster
         [HttpGet]
         public async Task<ActionResult<IEnumerable<mVoucherType>>> GetmVoucherType()
         {
-            return await _context.mVoucherType.ToListAsync();
+            return await _context.mVoucherType.Where(n => n.RStatus == "A").ToListAsync();
         }
 
         // GET: api/mVoucherTypes/5
@@ -113,7 +113,7 @@ namespace AuggitAPIServer.Controllers.Master.GeneralMaster
         [Route("getVoucherTypes")]
         public JsonResult getVoucherTypes(string vch)
         {
-            string query = "select * from public.\"mVoucherType\" where vchunder='"+ vch + "'";
+            string query = "select * from public.\"mVoucherType\" where vchunder='"+ vch + "' and \"RStatus\" = 'A' ";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))

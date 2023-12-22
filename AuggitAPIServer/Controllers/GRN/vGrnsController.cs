@@ -412,7 +412,7 @@ namespace AuggitAPIServer.Controllers.GRN
         [Route("getPurchaseAccounts")]
         public JsonResult getPurchaseAccounts()
         {
-            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"GroupCode\" ='LG0025'";
+            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"GroupCode\" ='LG0025'  and \"RStatus\"='A'";
             DataTable table = new DataTable();
 
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -435,7 +435,7 @@ namespace AuggitAPIServer.Controllers.GRN
         [Route("getVendorAccounts")]
         public JsonResult getVendorAccounts()
         {
-            string query = "select * from public.\"mLedgers\" where \"GroupCode\" ='LG0031'";
+            string query = "select * from public.\"mLedgers\" where \"GroupCode\" ='LG0031'  and \"RStatus\"='A' ";
             DataTable table = new DataTable();
 
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))

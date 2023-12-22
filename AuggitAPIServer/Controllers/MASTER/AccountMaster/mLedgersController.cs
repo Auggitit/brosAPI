@@ -9,6 +9,9 @@ using AuggitAPIServer.Data;
 using AuggitAPIServer.Model.MASTER.AccountMaster;
 using AuggitAPIServer.Model.MASTER.InventoryMaster;
 using Npgsql;
+using System.Drawing;
+using System.Data;
+using System.Configuration;
 
 namespace AuggitAPIServer.Controllers.Master.AccountMaster
 {
@@ -17,17 +20,19 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
     public class mLedgersController : ControllerBase
     {
         private readonly AuggitAPIServerContext _context;
+        private readonly IConfiguration _configuration;
 
-        public mLedgersController(AuggitAPIServerContext context)
+        public mLedgersController(AuggitAPIServerContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: api/mLedgers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<mLedgers>>> GetmLedgers()
         {
-            return await _context.mLedgers.ToListAsync();
+            return await _context.mLedgers.Where(n => n.RStatus == "A").ToListAsync();
         }
 
         // GET: api/mLedgers/5
@@ -73,6 +78,22 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
             }
 
             return NoContent();
+        }
+
+        [HttpGet]
+        [Route("checkDuplicate")]
+        public JsonResult checkDuplicate(string name)
+        {
+            var mcat = _context.mLedgers;
+            var dbvalue = mcat.Where(b => b.CompanyDisplayName.ToLower() == name.ToLower()).ToListAsync();
+            if (dbvalue.Result.Count > 0)
+            {
+                return new JsonResult("Found");
+            }
+            else
+            {
+                return new JsonResult("Not Found");
+            }
         }
 
         // POST: api/mLedgers
@@ -197,15 +218,16 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
         [Route("DeleteMledger")]
         public async Task<IActionResult> DeleteMledgerData(mLedgers mLedger)
         {
-             string query = "select * from public.\"accountentry\" where \"acccode\" ='" + mLedger.LedgerCode + "' ";
+             string query = "select coalesce(count(acccode),0) from public.\"accountentry\" where \"acccode\" ='" + mLedger.LedgerCode + "' ";
             int count = 0;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_configuration.GetConnectionString("con")))
             {
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                using (NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, myCon))
                 {
-                    count = myCommand.ExecuteNonQuery();
-                    if (count > 0)
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    if (int.Parse(dt.Rows[0][0].ToString()) > 0)
                     {
                         return Ok("Ledger Record Cannot be Deleted");
                     }
@@ -219,11 +241,16 @@ namespace AuggitAPIServer.Controllers.Master.AccountMaster
                         if (mLedgers.RStatus == "A")
                         {
                             mLedgers.RStatus = "D";
+                            await _context.SaveChangesAsync();
+                            return Ok("Deleted");
                         }
-                        //_context.mLedgers.Remove(mLedgers);
-                        await _context.SaveChangesAsync();
-
-                        return NoContent();
+                        else
+                        {
+                            mLedgers.RStatus = "A";
+                            await _context.SaveChangesAsync();
+                            return Ok("Restored");
+                        }
+                      
                     }
                 }  
             }

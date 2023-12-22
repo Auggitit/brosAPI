@@ -25,7 +25,7 @@ namespace AuggitAPIServer.Controllers.Master.GeneralMaster
         [HttpGet]
         public async Task<ActionResult<IEnumerable<mCompany>>> GetmCompany()
         {
-            return await _context.mCompany.ToListAsync();
+            return await _context.mCompany.Where(n => n.RStatus == "A").ToListAsync();
         }
 
         // GET: api/mCompanies/5
