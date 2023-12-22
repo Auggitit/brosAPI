@@ -276,13 +276,7 @@ namespace AuggitAPIServer.Controllers.Master.InventoryMaster
                             Item.RStatus = "A";
                             await _context.SaveChangesAsync();
                             return Ok("Restored");
-                        }
-                        else
-                        {
-                            Item.RStatus = "A";
-                        }
-                        await _context.SaveChangesAsync();
-                        return NoContent();
+                        }                      
                     }
                 }
             }
