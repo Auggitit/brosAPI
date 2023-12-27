@@ -279,6 +279,8 @@ namespace AuggitAPIServer.Controllers.MASTER.AccountMaster
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        [NonAction]
         public string GenarateRandamnumber()
         {
             Random rnd = new Random();

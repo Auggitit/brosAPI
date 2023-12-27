@@ -2061,35 +2061,40 @@ namespace AuggitAPIServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("RCreatedDateTime")
+                    b.Property<DateTime?>("RCreatedDateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("RStatus")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("cess")
+                    b.Property<string>("branchcode")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("cess")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("gst")
+                    b.Property<string>("companycode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("fy")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("gst")
                         .HasColumnType("numeric");
 
                     b.Property<string>("gstApplicable")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("gstCalculationtype")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("itemcategory")
+                    b.Property<int?>("itemcategory")
                         .HasColumnType("integer");
 
                     b.Property<int>("itemcode")
                         .HasColumnType("integer");
 
                     b.Property<string>("itemhsn")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("itemname")
@@ -2097,27 +2102,24 @@ namespace AuggitAPIServer.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("itemsku")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("itemunder")
+                    b.Property<int?>("itemunder")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("rateofDuty")
+                    b.Property<decimal?>("rateofDuty")
                         .HasColumnType("numeric");
 
                     b.Property<string>("taxable")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("typeofSupply")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("uom")
+                    b.Property<int?>("uom")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("vat")
+                    b.Property<decimal?>("vat")
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
