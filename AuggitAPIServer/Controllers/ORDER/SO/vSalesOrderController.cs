@@ -97,7 +97,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getSO")]
         public JsonResult GetSO(string id, bool cusFields)
         {
-            string query = $"SELECT s.sono,s.sodate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.remarks,s.termsandcondition {(cusFields ? ",c.efieldname,c.efieldvalue" : "")} FROM public.\"vSO\" s LEFT JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" LEFT JOIN \"vSODetails\" sd ON s.sono = sd.sono {(cusFields ? "LEFT JOIN \"soCusFields\" c on(c.sono = s.sono)" : "")}  WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.sono,s.sodate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.remarks,s.termsandcondition {(cusFields ? ",c.efieldname,c.efieldvalue" : "")},s.\"discountTotal\" FROM public.\"vSO\" s LEFT JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" LEFT JOIN \"vSODetails\" sd ON s.sono = sd.sono {(cusFields ? "LEFT JOIN \"soCusFields\" c on(c.sono = s.sono)" : "")}  WHERE s.\"Id\" = '{id}'";
             List<dynamic> products = new List<dynamic>();
 
             var dt = Common.ExecuteQuery(_context, query);
@@ -123,6 +123,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 termsandcondition = dt.Rows[0][25].ToString(),
                 efieldname = cusFields ? dt.Rows[0][26].ToString() : "",
                 efieldvalue = cusFields ? dt.Rows[0][27].ToString() : "",
+                discount_total = cusFields ? dt.Rows[0][28].ToString() : dt.Rows[0][26].ToString(),
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)

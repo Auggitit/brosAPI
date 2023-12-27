@@ -97,7 +97,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getSSO")]
         public JsonResult GetSSO(string id, bool cusFields)
         {
-            string query = $"SELECT s.sono,s.sodate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.remarks,s.termsandcondition {(cusFields ? ",c.efieldname,c.efieldvalue" : "")} FROM public.\"vSSO\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSSODetails\" sd ON s.sono = sd.sono {(cusFields ? "LEFT JOIN \"ssoCusFields\" c on(c.sono = s.sono)" : "")}  WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.sono,s.sodate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.remarks,s.termsandcondition {(cusFields ? ",c.efieldname,c.efieldvalue" : "")},s.\"discountTotal\" FROM public.\"vSSO\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSSODetails\" sd ON s.sono = sd.sono {(cusFields ? "LEFT JOIN \"ssoCusFields\" c on(c.sono = s.sono)" : "")}  WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 
@@ -124,6 +124,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 termsandcondition = dt.Rows[0][25].ToString(),
                 efieldname = cusFields ? dt.Rows[0][26].ToString() : "",
                 efieldvalue = cusFields ? dt.Rows[0][27].ToString() : "",
+                discount_total = cusFields ? dt.Rows[0][28].ToString() : dt.Rows[0][26].ToString(),
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)
