@@ -95,10 +95,10 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
 
         [HttpGet]
         [Route("getPO")]
-        public JsonResult GetPO(string id)
+        public JsonResult GetPO(string id, bool cusFields)
         {
-            string query = $"SELECT s.pono,s.podate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.branch,s.fy,s.remarks,s.termsandcondition,c.efieldname,c.efieldvalue FROM public.\"vPO\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vPODetails\" sd ON s.pono = sd.pono LEFT JOIN \"poCusFields\" c on(c.pono = s.pono) WHERE s.\"Id\" = '{id}'";
-            
+            string query = $"SELECT s.pono,s.podate,s.refno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.branch,s.fy,s.remarks,s.termsandcondition{(cusFields ? ",c.efieldname,c.efieldvalue" : "")} FROM public.\"vPO\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vPODetails\" sd ON s.pono = sd.pono {(cusFields ? "LEFT JOIN \"poCusFields\" c on(c.pono = s.pono)" : "")}   WHERE s.\"Id\" = '{id}'";
+            Console.WriteLine(query);
             List<dynamic> products = new List<dynamic>();
 
             var dt = Common.ExecuteQuery(_context, query);
@@ -123,8 +123,8 @@ namespace AuggitAPIServer.Controllers.ORDER.PO
                 fy = dt.Rows[0][24].ToString(),
                 remarks = dt.Rows[0][25].ToString(),
                 termsandcondition = dt.Rows[0][26].ToString(),
-                efieldname = dt.Rows[0][27].ToString(),
-                efieldvalue = dt.Rows[0][28].ToString(),
+                efieldname = cusFields ? dt.Rows[0][27].ToString() : "",
+                efieldvalue = cusFields ? dt.Rows[0][28].ToString() : "",
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)

@@ -219,12 +219,12 @@ namespace AuggitAPIServer.Controllers.SO
         public async Task<IActionResult> deleteSO(string sono, string vtype, string branch, string fy)
         {
             var sPo = await _context.vSO.AnyAsync(x => x.sono == sono && x.sotype == vtype && x.branch == branch && x.fy == fy);
-            if (sPo != null)
+            if (sPo == null)
             {
-                return BadRequest(new
+                return NotFound(new
                 {
-                    code = 400,
-                    Message = "This  SalesOrder having imaportant datas"
+                    code = 404,
+                    Message = "No Datas found"
                 });
 
             }
