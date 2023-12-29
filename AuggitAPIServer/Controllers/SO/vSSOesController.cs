@@ -219,7 +219,7 @@ namespace AuggitAPIServer.Controllers.SO
         [Route("deleteSSO")]
         public async Task<IActionResult> deleteSSO(string sono, string vtype, string branch, string fy)
         {
-            var sPo = await _context.vSSO.AnyAsync(x => x.sono == sono && x.sotype == vtype && x.branch == branch && x.fy == fy);
+            var sPo = await _context.vSSO.FirstOrDefaultAsync(x => x.sono == sono && x.sotype == vtype && x.branch == branch && x.fy == fy);
             if (sPo != null)
             {
                 return BadRequest(new
@@ -229,7 +229,8 @@ namespace AuggitAPIServer.Controllers.SO
                 });
 
             }
-            _context.Remove(sono);
+            _context.Remove(sPo);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
