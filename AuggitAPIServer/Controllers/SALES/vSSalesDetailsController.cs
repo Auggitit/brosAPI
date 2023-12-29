@@ -109,9 +109,22 @@ namespace AuggitAPIServer.Controllers.SALES
         [Route("insertBulk")]
         public async Task<ActionResult<vSSalesDetails>> insertBulk(List<vSSalesDetails> vSSalesDetails)
         {
+            var status = false;
+            var vsono = vSSalesDetails.Select(x => x.sono).FirstOrDefault();
             foreach (var row in vSSalesDetails)
             {
+                var soqty = await _context.vSSODetails.Where(x => x.sono == row.sono && x.productcode == row.productcode && x.product == row.product).Select(y => y.qty).FirstOrDefaultAsync();
+                if (soqty != null)
+                {
+                    status = true;
+                }
                 _context.vSSalesDetails.Add(row);
+                await _context.SaveChangesAsync();
+            }
+            if (status == true)
+            {
+                var vpo = _context.vSSO.First(x => x.sono == vsono);
+                vpo.status = 2;
                 await _context.SaveChangesAsync();
             }
             return CreatedAtAction("GetvSSalesDetails", vSSalesDetails);

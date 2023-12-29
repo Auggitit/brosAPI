@@ -110,16 +110,29 @@ namespace AuggitAPIServer.Controllers.GRN
         [Route("insertBulk")]
         public async Task<ActionResult<vSGrnDetails>> insertBulk(List<vSGrnDetails> vSGrnDetails)
         {
+            var status = false;
+            var vspono = vSGrnDetails.Select(x => x.pono).FirstOrDefault();
             foreach (var row in vSGrnDetails)
             {
+                var spono = await _context.vSPODetails.Where(x => x.pono == row.pono && x.productcode == row.productcode && x.product == row.product).Select(y => y.qty).FirstOrDefaultAsync();
+                if (spono != null)
+                {
+                    status = true;
+                }
                 _context.vSGrnDetails.Add(row);
+                await _context.SaveChangesAsync();
+            }
+            if (status == true)
+            {
+                var vpo = _context.vSPO.First(x => x.pono == vspono);
+                vpo.status = 2;
                 await _context.SaveChangesAsync();
             }
             return CreatedAtAction("GetvSGrnDetails", vSGrnDetails);
         }
         [HttpGet]
         [Route("deleteSGRNDetails")]
-        public JsonResult deleteSGRNDetails(string invno, string vtype,string branch,string fy)
+        public JsonResult deleteSGRNDetails(string invno, string vtype, string branch, string fy)
         {
             string query = "delete from public.\"vSGrnDetails\" where \"grnno\" ='" + invno + "' and vchtype='" + vtype + "' and branch='" + branch + "' and fy='" + fy + "'";
             int count = 0;

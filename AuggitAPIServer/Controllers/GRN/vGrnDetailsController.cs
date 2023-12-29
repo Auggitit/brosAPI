@@ -117,7 +117,11 @@ namespace AuggitAPIServer.Controllers.GRN
             var vpono = vGrnDetails.Select(x => x.pono).FirstOrDefault();
             foreach (var row in vGrnDetails)
             {
-                
+                var pono = await _context.vPODetails.Where(x => x.pono == row.pono && x.productcode == row.productcode && x.product == row.product).Select(y => y.qty).FirstOrDefaultAsync();
+                if (pono != null)
+                {
+                    status = true;
+                }
                 _context.vGrnDetails.Add(row);
                 await _context.SaveChangesAsync();
             }
