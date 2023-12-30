@@ -10,6 +10,9 @@ using AuggitAPIServer.Model.PO;
 using AuggitAPIServer.Model.ACCOUNTS;
 using Npgsql;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Data;
+using Newtonsoft.Json;
+
 
 namespace AuggitAPIServer.Controllers.ACCOUNTS
 {
@@ -158,11 +161,21 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
         [Route ("getLedger")]
         public JsonResult getLedger(string vchno)
         {
-           
-                var result = _context.OtherAccEntry.Where(s => s.vchno == vchno).ToList();
-                return new JsonResult(result);
-           
-            
+            string query = "select ot.\"Id\", ot.acccode, ot.vchno, ot.vchdate, ot.vchtype, ot.entrytype, ot.cr, ot.dr, ot.comp, ot.branch, ot.fy, ot.gst, ot.hsn, ml.\"CompanyDisplayName\" from \"OtherAccEntry\" AS ot LEFT JOIN \"mLedgers\" AS ml ON ot.acccode = CAST(ml.\"LedgerCode\" AS TEXT) WHERE ot.vchno ='" + vchno + "' " ;
+            DataTable table = new DataTable();
+            NpgsqlDataReader myReader;
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            {
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult(table);            
         }
 
         [HttpGet]
