@@ -140,14 +140,27 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
         {
             return _context.accountentry.Any(e => e.Id == id);
         }
+
         [HttpGet]
         [Route("getLedger")]
         public JsonResult getLedger(string vchno)
         {
-            var result = _context.accountentry.Where(s => s.vchno == vchno).ToList();
-            return new JsonResult(result);
+            string query = "select at.\"Id\", at.acccode, at.vchno, at.vchdate, at.vchtype, at.entrytype, at.cr, at.dr, at.comp, at.branch, at.fy, at.gst, at.hsn, ml.\"CompanyDisplayName\" from \"accountentry\" AS at INNER JOIN \"mLedgers\" AS ml ON at.acccode = CAST(ml.\"LedgerCode\" AS TEXT) WHERE at.vchno ='" + vchno + "' " ;
+            DataTable table = new DataTable();
+            NpgsqlDataReader myReader;
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            {
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult(table);            
         }
-
 
         [HttpGet]
         [Route("deteleAllLedger")]
