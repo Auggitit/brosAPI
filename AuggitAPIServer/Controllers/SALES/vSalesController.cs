@@ -303,6 +303,7 @@ namespace AuggitAPIServer.Controllers.SALES
             public string tcs { get; set; }
             public string rounded { get; set; }
             public string saleref { get; set; }
+            public string refno { get; set; }
             public List<solistDetails> solistDetails { get; set; }
         }
 
@@ -499,9 +500,9 @@ namespace AuggitAPIServer.Controllers.SALES
         public JsonResult getPendingSOListDetails(string customercode)
         {
             string query = "select a.sono,a.sodate,a.customername,a.customercode,a.\"expDeliveryDate\", "
-                + " sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, \r\nsum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,salerefname  from public.\"vSO\" "
+                + " sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, \r\nsum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,salerefname,refno  from public.\"vSO\" "
                 + " a left outer join pending_sos b on a.sono=b.sono \r\nwhere a.customercode = '" + customercode + "'\r\ngroup by a.sono,a.sodate,a.customername,a.customercode, "
-                + " a.sodate,a.\"expDeliveryDate\",a.net,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,salerefname HAVING((sum(b.ordered)-sum(b.received))>0);";
+                + " a.sodate,a.\"expDeliveryDate\",a.net,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,salerefname,refno HAVING((sum(b.ordered)-sum(b.received))>0);";
             List<solist> polist = new List<solist>();
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
             DataTable dt = new DataTable();
@@ -526,6 +527,7 @@ namespace AuggitAPIServer.Controllers.SALES
                     tcs = dt.Rows[i][13].ToString(),
                     rounded = dt.Rows[i][14].ToString(),
                     saleref = dt.Rows[i][15].ToString(),
+                    refno = dt.Rows[i][16].ToString(),
                     solistDetails = GetPendingSOListProductDetails(pono: dt.Rows[i][0].ToString())
                 };
                 polist.Add(pl);
