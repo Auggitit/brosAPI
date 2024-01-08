@@ -270,7 +270,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
         //     return datas;
         // }
 
-        [HttpGet]
+         [HttpGet]
         [Route("GetTrialBalanceData")]
         public IList GetTrialBalanceData(string? fy)
         {
@@ -300,6 +300,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
             //}
             #endregion
 
+            //Parent
             string query1 = " select \"mLedgerGroup\".\"groupcode\" code,\"mLedgerGroup\".\"groupname\" name,\"mLedgerGroup\".\"groupunder\" parent,'' dr,'' cr,'' balance,'0' parentname from public.\"mLedgerGroup\" WHERE length(\"mLedgerGroup\".\"groupcode\")=6 ";
             NpgsqlDataAdapter da1 = new NpgsqlDataAdapter(query1, con);
             DataTable dt1 = new DataTable();
@@ -319,57 +320,49 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
                 datas.Add(data);
             }
 
-            string query = " select code Code,Name,Parent,\r\ncase when sum(dr) is null then 0 else sum(dr) end DR,\r\ncase when sum(cr) is null then 0 else sum(cr) end CR,\r\ncase when sum(dr)-sum(cr) > 0 then\r\ncast((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end) as text)  else \r\ncast(((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end)*-1) as text)  end \r\nBALANCE,b.groupname parentname from trialbalance a \r\nleft outer join public.\"mLedgerGroup\" b on a.parent=b.\"groupcode\" group by code,Name,Parent,fy,b.groupname ";
+            //data
+            //string query = " select code Code,Name,Parent,\r\ncase when sum(dr) is null then 0 else sum(dr) end DR,\r\ncase when sum(cr) is null then 0 else sum(cr) end CR,\r\ncase when sum(dr)-sum(cr) > 0 then\r\ncast((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end) as text)  else \r\ncast(((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end)*-1) as text)  end \r\nBALANCE,b.groupname parentname from trialbalance a \r\nleft outer join public.\"mLedgerGroup\" b on a.parent=b.\"groupcode\" group by code,Name,Parent,fy,b.groupname ";
+            string query = " select code Code,Name,Parent,\r\ncase when sum(dr) is null then 0 else sum(dr) end DR,\r\ncase when sum(cr) is null then 0 else sum(cr) end CR,b.groupname parentname from trialbalance a \r\nleft outer join public.\"mLedgerGroup\" b on a.parent=b.\"groupcode\" group by code,Name,Parent,fy,b.groupname ";
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, con);
             DataTable dt = new DataTable();
             da.Fill(dt);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                data = new tblist()
+                string _dr = dt.Rows[i][3].ToString();
+                string _cr = dt.Rows[i][4].ToString();
+                double bal = double.Parse(_dr) - double.Parse(_cr);
+                if (bal > 0)
                 {
-                    code = dt.Rows[i][0].ToString(),
-                    name = dt.Rows[i][1].ToString(),
-                    parent = dt.Rows[i][2].ToString(),
-                    dr = dt.Rows[i][3].ToString(),
-                    cr = dt.Rows[i][4].ToString(),
-                    balance = dt.Rows[i][5].ToString(),
-                    parentname = dt.Rows[i][6].ToString(),
-                };
-                datas.Add(data);
+                    data = new tblist()
+                    {
+                        code = dt.Rows[i][0].ToString(),
+                        name = dt.Rows[i][1].ToString(),
+                        parent = dt.Rows[i][2].ToString(),
+                        dr = bal.ToString("0.00"),
+                        cr = "0",
+                        balance = bal.ToString("0.00"),
+                        parentname = dt.Rows[i][5].ToString(),
+                    };
+                    datas.Add(data);
+                }
+                else
+                {
+                    data = new tblist()
+                    {
+                        code = dt.Rows[i][0].ToString(),
+                        name = dt.Rows[i][1].ToString(),
+                        parent = dt.Rows[i][2].ToString(),
+                        dr = "0",
+                        cr = (bal * -1).ToString("0.00"),
+                        balance = (bal * -1).ToString("0.00"),
+                        parentname = dt.Rows[i][5].ToString(),
+                    };
+                    datas.Add(data);
+                }
             }
             var json = JsonSerializer.Serialize(datas);
             return datas;
 
-
-
-            //if (!string.IsNullOrEmpty(fy))
-            //{
-            //    fy = $" AND fy = '{fy}'";
-            //}
-
-            //List<tblist> datas = new List<tblist>();
-            //string con = _context.Database.GetDbConnection().ConnectionString.ToString();
-
-            //string query = $" select code Code,Name,Parent,\r\ncase when sum(dr) is null then 0 else sum(dr) end DR,\r\ncase when sum(cr) is null then 0 else sum(cr) end CR,\r\ncase when sum(dr)-sum(cr) > 0 then\r\ncast((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end) as text)  else \r\ncast(((case when sum(dr) is null then 0 else sum(dr) end -\r\ncase when sum(cr) is null then 0 else sum(cr) end)*-1) as text)  end \r\nBALANCE,b.groupname parentname, fy from trialbalance a \r\nleft outer join public.\"mLedgerGroup\" b on a.parent=b.\"groupcode\" where 1=1 {fy} group by code,Name,Parent,fy,b.groupname ";
-            //NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, con);
-            //DataTable dt = new DataTable();
-            //da.Fill(dt);
-            //for (int i = 0; i < dt.Rows.Count; i++)
-            //{
-            //    var data = new tblist()
-            //    {
-            //        code = dt.Rows[i][0].ToString(),
-            //        name = dt.Rows[i][1].ToString(),
-            //        parent = dt.Rows[i][2].ToString(),
-            //        dr = dt.Rows[i][3].ToString(),
-            //        cr = dt.Rows[i][4].ToString(),
-            //        balance = dt.Rows[i][5].ToString(),
-            //        parentname = dt.Rows[i][6].ToString(),
-            //        fy = dt.Rows[i][7].ToString(),
-            //    };
-            //    datas.Add(data);
-            //}
-            //return datas;
         }
 
         [HttpGet]
