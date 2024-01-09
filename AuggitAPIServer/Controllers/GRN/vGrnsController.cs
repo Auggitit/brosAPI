@@ -149,7 +149,7 @@ namespace AuggitAPIServer.Controllers.GRN
 
         [HttpGet]
         [Route("getMaxInvno")]
-        public JsonResult GetMaxInvno(string vchtype, string branch, string fycode, string fy,string prefix)
+        public JsonResult GetMaxInvno(string vchtype, string branch, string fycode, string fy, string prefix)
         {
             string invno = "";
             string invnoid = "";
@@ -209,6 +209,17 @@ namespace AuggitAPIServer.Controllers.GRN
             public string fy { get; set; }
             public string spoid { get; set; }
             public string ponoid { get; set; }
+            public string contactpersonname { get; set; }
+            public string phoneno { get; set; }
+            public string cgstTotal { get; set; }
+            public string igstTotal { get; set; }
+            public string sgstTotal { get; set; }
+            public string subTotal { get; set; }
+            public string discountTotal { get; set; }
+            public string closingValue { get; set; }
+
+            public string termsandcondition { get; set; }
+            public string remarks { get; set; }
             public List<polistDetails> polistDetails { get; set; }
         }
 
@@ -341,8 +352,8 @@ namespace AuggitAPIServer.Controllers.GRN
         public JsonResult getPendingPOListDetails(string vendorcode, string branch, string fy)
         {
             string query = "select a.pono,a.podate,a.vendorname,a.vendorcode,a.\"expDeliveryDate\",sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, " +
-            " sum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,a.potype,false,a.ponoid,a.branch,a.fy from public.\"vPO\" a \r\nleft outer join pending_pos b on a.pono= b.pono \r\n where a.vendorcode = '" + vendorcode + "'and  a.branch='" + branch + "' and a.fy='" + fy + "'     \r\n " +
-            " group by a.pono,a.ponoid,a.branch,a.fy,a.podate,a.vendorname,a.vendorcode,a.podate,a.\"expDeliveryDate\",a.net,a.potype,a.\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff HAVING((sum(b.ordered)-sum(b.received))>0);";
+            " sum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,a.potype,false,a.ponoid,a.branch,a.fy,a.contactpersonname,a.phoneno,a.termsandcondition,a.remarks from public.\"vPO\" a \r\nleft outer join pending_pos b on a.pono= b.pono \r\n where a.vendorcode = '" + vendorcode + "'and  a.branch='" + branch + "' and a.fy='" + fy + "' and a.status=1     \r\n " +
+            " group by a.pono,a.ponoid,a.branch,a.fy,a.podate,a.vendorname,a.vendorcode,a.podate,a.\"expDeliveryDate\",a.net,a.potype,a.\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,a.contactpersonname,a.phoneno,a.termsandcondition,a.remarks HAVING((sum(b.ordered)-sum(b.received))>0);";
             List<polist> polist = new List<polist>();
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
             DataTable dt = new DataTable();
@@ -370,6 +381,10 @@ namespace AuggitAPIServer.Controllers.GRN
                     branch = dt.Rows[i][18].ToString(),
                     fy = dt.Rows[i][19].ToString(),
                     ponoid = dt.Rows[i][17].ToString(),
+                    contactpersonname = dt.Rows[i][20].ToString(),
+                    phoneno = dt.Rows[i][21].ToString(),
+                    termsandcondition = dt.Rows[i][21].ToString(),
+                    remarks = dt.Rows[i][21].ToString(),
                     polistDetails = GetPendingPOListProductDetails(pono: dt.Rows[i][0].ToString())
                 };
                 polist.Add(pl);
@@ -512,7 +527,7 @@ namespace AuggitAPIServer.Controllers.GRN
         [Route("getDefaultAccounts")]
         public JsonResult getDefaultAccount()
         {
-            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\"  where \"GroupCode\" NOT IN('LG0025','LG0012','LG0031','LG0032','LG0028') ";
+            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\"  where  \"GroupCode\"='LG0013'";
             DataTable table = new DataTable();
 
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))

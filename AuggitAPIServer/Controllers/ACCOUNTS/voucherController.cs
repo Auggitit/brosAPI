@@ -112,7 +112,7 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
         [Route("getMaxInvno")]
         public JsonResult getMaxInvno(string vtype)
         {
-            int? intId = _context.voucherEntry.Where(e=> e.vchtype == vtype).Max(u => (int?)u.vchno);
+            int? intId = _context.voucherEntry.Where(e=> e.vchtype == vtype).Max(u => (int?)u.vchnoid);
             if (intId == null)
             { intId = 1; }
             else
@@ -121,14 +121,77 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
         }
 
         [HttpGet]
+        [Route("getMaxInvnum")]
+        public JsonResult getMaxInvnum(string vtype, string branch, string fycode, string fy){
+            string temp;
+            string invno = "";
+            string invnoid = "";
+            string query = "select max(vchnoid) from public.\"voucherEntry\" where vchtype='" + vtype + "' and branch='" + branch + "' and fy='" + fy + "'"; 
+            DataTable table = new DataTable();
+            NpgsqlDataReader myReader;
+            using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+            {
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                    if(vtype == "Bank Payment"){
+                        temp = "BP";
+                    }
+                    else if(vtype == "Cash Payment"){
+                        temp = "CP";
+                    }
+                    else if(vtype == "Bank Receipt"){
+                        temp = "BR";
+                    }
+                    else if(vtype == "Cash Receipt"){
+                        temp = "CR";
+                    }
+                    else if(vtype == "Contra"){
+                        temp = "CV";
+                    }
+                    else{
+                        temp = "JE";
+                    }
+
+                    if (table.Rows.Count > 0)
+                    {
+
+                        if (table.Rows.Count > 0)
+                        {
+
+                            var val = table.Rows[0][0].ToString();
+                            if (val == "")
+                            {
+                                invno = "1/" + fycode + "/" + temp;
+                                invnoid = "1";
+                            }
+                            else
+                            {
+                                invno = (int.Parse(val) + 1).ToString() + "/" + fycode + "/" + temp;
+                                invnoid = (int.Parse(val) + 1).ToString();
+                            }
+                        }
+                    }
+
+                }
+            }
+            var result = new { InvNo = invno, InvNoId = invnoid };
+            return new JsonResult(result);
+        }
+
+        [HttpGet]
         [Route("getVoucherList")]
         public JsonResult getVoucherList(string fdate, string tdate, string vchtype)
         {
             //DateTime _fdate = DateTime.Parse(fdate, new System.Globalization.CultureInfo("ta-IN"));
             //DateTime _tdate = DateTime.Parse(tdate, new System.Globalization.CultureInfo("ta-IN"));
-            string query = "select vchno VCH_NO,vchdate VCH_DATE,vchtype VCH_TYPE,\r\n        " +
+            string query = "select vchno VCH_NO, vchnoid VCH_NO_ID, vchdate VCH_DATE,vchtype VCH_TYPE,\r\n        " +
                 "    paymode PAYMENT_MODE, b.\"CompanyDisplayName\" ACCOUNT_NAME,c.\"CompanyDisplayName\" LEDGER_NAME, \r\n         " +
-                "   amount AMOUNT, chqno CHQ_NO,chqdate CHQ_DATE, refno ONLINE_REF,refdate ONLINE_REF_DATE from public.\"voucherEntry\" a \r\n " +
+                "   amount AMOUNT, chqno CHQ_NO,chqdate CHQ_DATE, refno ONLINE_REF,refdate ONLINE_REF_DATE,a.credit,a.debit from public.\"voucherEntry\" a \r\n " +
                 "           left outer join public.\"mLedgers\" b on a.acccode = cast(b.\"LedgerCode\" as text) \r\n    " +
                 "        left outer join public.\"mLedgers\" c on a.ledgercode = cast(c.\"LedgerCode\" as text) WHERE vchtype = '" + vchtype + "' order by vchno desc ";          
             DataTable table = new DataTable();

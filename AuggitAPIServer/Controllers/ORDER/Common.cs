@@ -72,19 +72,18 @@ namespace AuggitAPIServer.Controllers.ORDER
             }
             return list;
         }
-        public static RtnData GetResultCount(AuggitAPIServerContext context, string DataTable, RtnData rtnData)
+        public static RtnData GetResultCount(AuggitAPIServerContext context, string DataTable, RtnData rtnData, string queryCon)
         {
             var query = "SELECT " +
                 "COUNT(*) AS total," +
                 "COALESCE(SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END), 0) AS pending," +
                 "COALESCE(SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END), 0) AS completed," +
                 "COALESCE(SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END), 0) AS cancelled," +
-                "COALESCE(SUM(CAST(net AS decimal)), 0) AS totalAmounts," +
-                "ROUND((COALESCE(SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END), 0) * 100.0 / COALESCE(NULLIF(COUNT(*), 0), 1)), 2) AS pendingPercentage," +
+                $"(Select COALESCE(SUM(CAST(net AS decimal)), 0) AS totalAmounts  FROM \"{DataTable}\" WHERE status !=3)," +
+                " ROUND((COALESCE(SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END), 0) * 100.0 / COALESCE(NULLIF(COUNT(*), 0), 1)), 2) AS pendingPercentage," +
                 "ROUND((COALESCE(SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END), 0) * 100.0 / COALESCE(NULLIF(COUNT(*), 0), 1)), 2) AS completedPercentage," +
                 "ROUND((COALESCE(SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END), 0) * 100.0 / COALESCE(NULLIF(COUNT(*), 0), 1)), 2) AS cancelledPercentage" +
-            $" FROM \"{DataTable}\"";
-            Console.WriteLine(query);
+            $" FROM \"{DataTable}\" as a WHERE 1=1 {queryCon}";
             var dt = ExecuteQuery(context, query);
 
             rtnData.Total = (long)dt.Rows[0][0] != null ? (long)dt.Rows[0][0] : 0;

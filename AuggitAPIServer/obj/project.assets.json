@@ -13023,32 +13023,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Admin\\.nuget\\packages\\": {},
-    "C:\\Program Files\\DevExpress 23.1\\Components\\Offline Packages": {}
+    "C:\\Users\\chand\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\A-BROS IT\\AUGGIT\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
+      "projectUniqueName": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
       "projectName": "AuggitAPIServer",
-      "projectPath": "C:\\A-BROS IT\\AUGGIT\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
-      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\A-BROS IT\\AUGGIT\\brosAPI\\AuggitAPIServer\\obj\\",
+      "projectPath": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\AuggitAPIServer.csproj",
+      "packagesPath": "C:\\Users\\chand\\.nuget\\packages\\",
+      "outputPath": "D:\\auggit- angular\\Source code Auggit Sep 23\\BrosITSyncCodeBackEnd\\Copy01\\brosAPI\\AuggitAPIServer\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\DevExpress 23.1\\Components\\Offline Packages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 23.1.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\chand\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\DevExpress 23.1\\Components\\System\\Components\\Packages": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -13125,6 +13117,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[6.0.22, 6.0.22]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[6.0.22, 6.0.22]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[6.0.22, 6.0.22]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[6.0.22, 6.0.22]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"

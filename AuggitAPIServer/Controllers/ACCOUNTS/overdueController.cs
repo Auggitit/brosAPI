@@ -113,12 +113,12 @@ namespace AuggitAPIServer.Controllers.ACCOUNTS
 
         [HttpGet]
         [Route("getOverDueListForEdit")]
-        public JsonResult getOverDueListForEdit(string vchno, string vchtype)
+        public JsonResult getOverDueListForEdit(string vchnoid, string vchtype)
         {
-            string query = "select vchno,vchdate,a.ledgercode,b.\"CompanyDisplayName\" ledgername,a.acccode,c.\"CompanyDisplayName\" accname,amount,paymode,chqno,chqdate,refno,refdate,remarks,paytype from public.\"voucherEntry\" a " +
+            string query = "select vchno,vchtype,vchnoid,vchdate,bankname,a.ledgercode,b.\"CompanyDisplayName\" ledgername,a.acccode,c.\"CompanyDisplayName\" accname,amount,paymode,chqno,chqdate,refno,refdate,remarks,paytype,a.credit,a.debit from public.\"voucherEntry\" a " +
                 " left outer join public.\"mLedgers\" b on  cast(a.ledgercode as int) =b.\"LedgerCode\" " +
                 " left outer join public.\"mLedgers\" c on  cast(a.acccode as int) =c.\"LedgerCode\" " +
-                " where vchno='" + vchno + "' and vchtype='" + vchtype + "'";
+                " where vchnoid='" + vchnoid + "' and vchtype='" + vchtype + "'";
             //having((sum(amount)-sum(received))>0)
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;

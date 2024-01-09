@@ -45,7 +45,7 @@ namespace AuggitAPIServer.Controllers.CRNOTE
             return vCR;
         }
 
-         [HttpPost("Update/{id}")]
+        [HttpPost("Update/{id}")]
         public async Task<IActionResult> PatchVSales(Guid id, int status)
         {
             var vCR = await _context.vCR.FindAsync(id);
@@ -143,7 +143,7 @@ namespace AuggitAPIServer.Controllers.CRNOTE
         [Route("getSalesAccounts")]
         public JsonResult getSalesAccounts()
         {
-            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"GroupCode\" ='LG0028' and \"RStatus\"='A'";
+            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"LedgerCode\" ='131' and \"RStatus\"='A'";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -187,7 +187,7 @@ namespace AuggitAPIServer.Controllers.CRNOTE
         [Route("getDefaultAccounts")]
         public JsonResult getDefaultAccounts()
         {
-            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\"  where \"RStatus\"='A'";
+            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\"  where \"RStatus\"='A' and \"GroupCode\"='LG0013'";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -203,7 +203,7 @@ namespace AuggitAPIServer.Controllers.CRNOTE
             }
             //var json = JsonConvert.SerializeObject(table);
             return new JsonResult(JsonConvert.SerializeObject(table));
-        }      
+        }
 
         [HttpGet]
         [Route("getMaxInvno")]
@@ -212,7 +212,7 @@ namespace AuggitAPIServer.Controllers.CRNOTE
             string invno = "";
             string invnoid = "";
             string query = "select max(crid) from public.\"vCR\" where vchtype='" + vchtype + "' and branch='" + branch + "' and fy='" + fycode + "'";
-            DataTable table = new DataTable();
+                        DataTable table = new DataTable();
 
 
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -257,6 +257,7 @@ namespace AuggitAPIServer.Controllers.CRNOTE
             public string customername { get; set; }
             public string refno { get; set; }
             public string salerefname { get; set; }
+            public string salesaccno { get; set; }
             public string subtotal { get; set; }
             public string discounttotal { get; set; }
             public string cgsttotal { get; set; }
@@ -266,12 +267,14 @@ namespace AuggitAPIServer.Controllers.CRNOTE
             public string tcsrate { get; set; }
             public string tcsvalue { get; set; }
             public string net { get; set; }
+            public string closingValue { get; set; }
             public string vchcreateddate { get; set; }
             public string vchstatus { get; set; } = string.Empty;
             public string company { get; set; }
             public string branch { get; set; }
             public string fy { get; set; }
             public string remarks { get; set; }
+            public string termsandcondition { get; set; }
             public string invoicecopy { get; set; }
             public List<crlistDetails> saleslistDetails { get; set; }
         }
@@ -456,6 +459,167 @@ namespace AuggitAPIServer.Controllers.CRNOTE
             }
             return new JsonResult(count);
         }
+
+        [HttpGet]
+        [Route("getPendingSalesListDetails")]
+        public JsonResult getPendingSalesListDetails(string customercode, string branch, string fy)
+        {
+            string query = "select a.invno,a.invdate,a.customername,a.customercode,a.refno,a.\"RCreatedDateTime\"," +
+            "roundedoff,a.branch,a.fy,a.vchtype,a.salerefname,a.saleaccount,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"subTotal\",a.\"discountTotal\",a.\"closingValue\",a.net,a.termsandcondition,a.remarks from public.\"vSales\" a where a.customercode = '" + customercode + "'and  a.branch='" + branch + "' and a.fy='" + fy + "'     \r\n " +
+            " group by a.invno,a.invdate,a.customername,a.customercode,a.refno,a.\"RCreatedDateTime\"," +
+            "roundedoff,a.branch,a.fy,a.vchtype,a.salerefname,a.saleaccount,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"subTotal\",a.\"discountTotal\",a.\"closingValue\",a.net,a.termsandcondition,a.remarks;";
+            Console.WriteLine(query, "GRN");
+            List<crlist> crlist = new List<crlist>();
+            NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                crlist pl = new crlist
+                {
+                    vchno = dt.Rows[i][0].ToString(),
+                    vchdate = dt.Rows[i][1].ToString(),
+                    customername = dt.Rows[i][2].ToString(),
+                    customercode = dt.Rows[i][3].ToString(),
+                    refno = dt.Rows[i][4].ToString(),
+                    vchcreateddate = dt.Rows[i][5].ToString(),
+                    roundedoff = dt.Rows[i][6].ToString(),
+                    branch = dt.Rows[i][7].ToString(),
+                    fy = dt.Rows[i][8].ToString(),
+                    vchtype = dt.Rows[i][9].ToString(),
+                    salerefname = dt.Rows[i][10].ToString(),
+                    salesaccno = dt.Rows[i][11].ToString(),
+                    cgsttotal = dt.Rows[i][12].ToString(),
+                    sgsttotal = dt.Rows[i][13].ToString(),
+                    igsttotal = dt.Rows[i][14].ToString(),
+                    subtotal = dt.Rows[i][15].ToString(),
+                    discounttotal = dt.Rows[i][16].ToString(),
+                    closingValue = dt.Rows[i][17].ToString(),
+                    net = dt.Rows[i][18].ToString(),
+                    termsandcondition = dt.Rows[i][19].ToString(),
+                    remarks = dt.Rows[i][20].ToString(),
+                    saleslistDetails = GetPendingSalesListProductDetails(vchno: dt.Rows[i][0].ToString())
+                };
+                crlist.Add(pl);
+            }
+            return new JsonResult(crlist);
+        }
+
+
+        [HttpGet]
+        [Route("GetPendingSalesListProductDetails")]
+        public List<crlistDetails> GetPendingSalesListProductDetails(string vchno)
+        {
+            List<crlistDetails> pldet = new List<crlistDetails>();
+            string query = " select productcode,product,sku,hsn,godown," +
+                "qty,rate,disc,gst,taxable,subTotal,amount \r\nfrom \"vSalesDetails\" " +
+                " where invno='" + vchno + "'\r\ngroup by productcode,product,sku,hsn,godown,rate,disc,gst,qty,taxable,subTotal,amount";
+            Console.WriteLine(query, "vSalesDetails");
+
+            NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                crlistDetails pl = new crlistDetails()
+                {
+                    productcode = dt.Rows[i][0].ToString(),
+                    product = dt.Rows[i][1].ToString(),
+                    sku = dt.Rows[i][2].ToString(),
+                    hsn = dt.Rows[i][3].ToString(),
+                    godown = dt.Rows[i][4].ToString(),
+                    qty = dt.Rows[i][5].ToString(),
+                    rate = dt.Rows[i][6].ToString(),
+                    disc = dt.Rows[i][7].ToString(),
+                    gst = dt.Rows[i][8].ToString(),
+                    taxable = dt.Rows[i][9].ToString(),
+                    subtotal = dt.Rows[i][10].ToString(),
+                    amount = dt.Rows[i][11].ToString()
+                };
+                pldet.Add(pl);
+            }
+            return pldet;
+        }
+
+        [HttpGet]
+        [Route("getPendingSSalesListDetails")]
+        public JsonResult getPendingSSalesListDetails(string customercode, string branch, string fy)
+        {
+            string query = "select a.invno,a.invdate,a.customername,a.customercode,a.refno,a.\"RCreatedDateTime\"," +
+            "roundedoff,a.branch,a.fy,a.vchtype,a.salerefname,a.saleaccount,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"subTotal\",a.\"discountTotal\",a.\"closingValue\",a.net,a.termsandcondition,a.remarks from public.\"vSSales\" a where a.customercode = '" + customercode + "'and  a.branch='" + branch + "' and a.fy='" + fy + "'     \r\n " +
+            " group by a.invno,a.invdate,a.customername,a.customercode,a.refno,a.\"RCreatedDateTime\"," +
+            "roundedoff,a.branch,a.fy,a.vchtype,a.salerefname,a.saleaccount,a.\"cgstTotal\",a.\"sgstTotal\",a.\"igstTotal\",a.\"subTotal\",a.\"discountTotal\",a.\"closingValue\",a.net,a.termsandcondition,a.remarks;";
+            Console.WriteLine(query, "GRN");
+            List<crlist> crlist = new List<crlist>();
+            NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                crlist pl = new crlist
+                {
+                    vchno = dt.Rows[i][0].ToString(),
+                    vchdate = dt.Rows[i][1].ToString(),
+                    customername = dt.Rows[i][2].ToString(),
+                    customercode = dt.Rows[i][3].ToString(),
+                    refno = dt.Rows[i][4].ToString(),
+                    vchcreateddate = dt.Rows[i][5].ToString(),
+                    roundedoff = dt.Rows[i][6].ToString(),
+                    branch = dt.Rows[i][7].ToString(),
+                    fy = dt.Rows[i][8].ToString(),
+                    vchtype = dt.Rows[i][9].ToString(),
+                    salerefname = dt.Rows[i][10].ToString(),
+                    salesaccno = dt.Rows[i][11].ToString(),
+                    cgsttotal = dt.Rows[i][12].ToString(),
+                    sgsttotal = dt.Rows[i][13].ToString(),
+                    igsttotal = dt.Rows[i][14].ToString(),
+                    subtotal = dt.Rows[i][15].ToString(),
+                    discounttotal = dt.Rows[i][16].ToString(),
+                    closingValue = dt.Rows[i][17].ToString(),
+                    net = dt.Rows[i][18].ToString(),
+                    termsandcondition = dt.Rows[i][19].ToString(),
+                    remarks = dt.Rows[i][20].ToString(),
+                    saleslistDetails = GetPendingSalesListProductDetails(vchno: dt.Rows[i][0].ToString())
+                };
+                crlist.Add(pl);
+            }
+            return new JsonResult(crlist);
+        }
+
+
+        [HttpGet]
+        [Route("GetPendingSSalesListProductDetails")]
+        public List<crlistDetails> GetPendingSSalesListProductDetails(string vchno)
+        {
+            List<crlistDetails> pldet = new List<crlistDetails>();
+            string query = " select productcode,product,sku,hsn,godown," +
+                "qty,rate,disc,taxable,gst \r\nfrom \"vSSalesDetails\" " +
+                " where invno='" + vchno + "'\r\ngroup by productcode,product,sku,hsn,godown,rate,disc,gst,qty,taxable ";
+            Console.WriteLine(query, "vSSalesDetails");
+
+            NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                crlistDetails pl = new crlistDetails()
+                {
+                    productcode = dt.Rows[i][0].ToString(),
+                    product = dt.Rows[i][1].ToString(),
+                    sku = dt.Rows[i][2].ToString(),
+                    hsn = dt.Rows[i][3].ToString(),
+                    godown = dt.Rows[i][4].ToString(),
+                    qty = dt.Rows[i][5].ToString(),
+                    rate = dt.Rows[i][6].ToString(),
+                    disc = dt.Rows[i][7].ToString(),
+                    taxable = dt.Rows[i][8].ToString(),
+                    gst = dt.Rows[i][9].ToString()
+                };
+                pldet.Add(pl);
+            }
+            return pldet;
+        }
+
 
     }
 }

@@ -204,9 +204,14 @@ namespace AuggitAPIServer.Controllers.GRN
             public string ins { get; set; }
             public string tcs { get; set; }
             public string rounded { get; set; }
+            public string? refno { get; set; }
 
-            public string vtype { get; set; }            
-            
+            public string vtype { get; set; }
+            public string contactpersonname { get; set; }
+            public string phoneno { get; set; }
+            public string termsandcondition { get; set; }
+            public string remarks { get; set; }
+
             public List<polistDetailss> polistDetails { get; set; }
         }
 
@@ -333,8 +338,8 @@ namespace AuggitAPIServer.Controllers.GRN
         public JsonResult getPendingPOListDetails(string vendorcode)
         {
             string query = "select a.pono,a.podate,a.vendorname,a.vendorcode,a.\"expDeliveryDate\",sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, " +
-            " sum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff from public.\"vSPO\" a \r\nleft outer join pending_spos b on a.pono=b.pono\r\nwhere a.vendorcode = '" + vendorcode + "'\r\n " +
-            " group by a.pono,a.podate,a.vendorname,a.vendorcode,a.podate,a.\"expDeliveryDate\",a.net,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff HAVING((sum(b.ordered)-sum(b.received))>0);";
+            " sum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,a.refno,a.contactpersonname,a.phoneno,a.termsandcondition,a.remarks from public.\"vSPO\" a \r\nleft outer join pending_spos b on a.pono=b.pono\r\nwhere a.vendorcode = '" + vendorcode + "' and a.status=1\r\n " +
+            " group by a.pono,a.podate,a.vendorname,a.vendorcode,a.podate,a.\"expDeliveryDate\",a.net,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,a.refno,a.contactpersonname,a.phoneno,a.termsandcondition,a.remarks HAVING((sum(b.ordered)-sum(b.received))>0);";
             List<polists> polist = new List<polists>();
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
             DataTable dt = new DataTable();
@@ -358,6 +363,11 @@ namespace AuggitAPIServer.Controllers.GRN
                     ins = dt.Rows[i][12].ToString(),
                     tcs = dt.Rows[i][13].ToString(),
                     rounded = dt.Rows[i][14].ToString(),
+                    refno = dt.Rows[i][15].ToString(),
+                    contactpersonname = dt.Rows[i][16].ToString(),
+                    phoneno = dt.Rows[i][17].ToString(),
+                    termsandcondition = dt.Rows[i][18].ToString(),
+                    remarks = dt.Rows[i][19].ToString(),
                     polistDetails = GetPendingPOListProductDetails(pono: dt.Rows[i][0].ToString())
                 };
                 polist.Add(pl);
@@ -444,7 +454,7 @@ namespace AuggitAPIServer.Controllers.GRN
         [Route("getDefaultAccounts")]
         public JsonResult getDefaultAccounts()
         {
-            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"RStatus\"='A' ";
+            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"RStatus\"='A' and \"GroupCode\"='LG0013'";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -466,7 +476,7 @@ namespace AuggitAPIServer.Controllers.GRN
         {
             public Guid id { get; set; }
             public string grnno { get; set; }
-            public string sgrnid { get; set; }  
+            public string sgrnid { get; set; }
             public string grndate { get; set; }
             public string pono { get; set; }
             public string podate { get; set; }
@@ -658,7 +668,7 @@ namespace AuggitAPIServer.Controllers.GRN
             return new JsonResult(count);
         }
 
-       
+
 
         [HttpGet]
         [Route("deleteSGRNAccounts")]

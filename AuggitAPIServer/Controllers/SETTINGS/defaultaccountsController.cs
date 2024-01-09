@@ -113,7 +113,7 @@ namespace AuggitAPIServer.Controllers.SETTINGS
         public JsonResult getDefaultAccounts(string vtype)
         {
             string query = "select a.accountcode,b.\"CompanyDisplayName\" from defaultaccounts a "
-                + " left outer join public.\"mLedgers\" as b on cast(a.accountcode as text) = cast(b.\"LedgerCode\" as text) where a.vchtype='"+vtype+"' ";
+                + " left outer join public.\"mLedgers\" as b on cast(a.accountcode as text) = cast(b.\"LedgerCode\" as text) where a.vchtype='" + vtype + "' and b.\"GroupCode\"='LG0013' ";
             DataTable table = new DataTable();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))

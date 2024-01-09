@@ -12,7 +12,7 @@
         public string? customercode { get; set; }
         public string? customername { get; set; }
         public string? refno { get; set; }
-        public string salerefname { get; set; }
+        public string? salerefname { get; set; } = string.Empty;
         public decimal subtotal { get; set; }
         public decimal discounttotal { get; set; }
         public decimal cgsttotal { get; set; }
@@ -31,7 +31,7 @@
         public string? invoicecopy { get; set; }
         public string? contactpersonname { get; set; }
         public string? phoneno { get; set; }
-        public int? status { get; set; }
+        public int? status { get; set; } = 1;
 
     }
 }

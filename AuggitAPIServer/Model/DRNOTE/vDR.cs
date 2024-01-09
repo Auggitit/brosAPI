@@ -12,7 +12,7 @@
         public string? vendorcode { get; set; }
         public string? vendorname { get; set; }
         public string? refno { get; set; }
-        public string salerefname { get; set; }
+        // public string? salerefname { get; set; }
         public decimal subtotal { get; set; }
         public decimal discounttotal { get; set; }
         public decimal cgsttotal { get; set; }
@@ -31,6 +31,6 @@
         public string? fy { get; set; }
         public string? remarks { get; set; }
         public string? invoicecopy { get; set; }
-        public int? status { get; set; }
+        public int? status { get; set; } = 1;
     }
 }

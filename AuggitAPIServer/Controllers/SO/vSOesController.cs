@@ -87,7 +87,16 @@ namespace AuggitAPIServer.Controllers.SO
                 return NotFound();
             }
 
-            vSO.status = status;
+            if (status == 1)
+            {
+                var sales = await _context.vSales.FirstOrDefaultAsync(x => x.sono == vSO.sono);
+                if (sales != null)
+                {
+                    return BadRequest("The Sales Order have Sales");
+                }
+            }
+
+            vSO.status = status == 1 ? 3 : 1;
 
             try
             {

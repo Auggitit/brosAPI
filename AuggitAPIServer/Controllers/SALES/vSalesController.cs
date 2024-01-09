@@ -77,7 +77,7 @@ namespace AuggitAPIServer.Controllers.SALES
             return NoContent();
         }
 
-         [HttpPost("Update/{id}")]
+        [HttpPost("Update/{id}")]
         public async Task<IActionResult> PatchVSales(Guid id, int status)
         {
             var vSales = await _context.vSales.FindAsync(id);
@@ -107,7 +107,7 @@ namespace AuggitAPIServer.Controllers.SALES
 
             return new JsonResult(vSales);
         }
-        
+
         [HttpPost("UpdatevSales")]
         public async Task<IActionResult> UpdatevSales(EinvoiceResponse vSales)
         {
@@ -218,7 +218,7 @@ namespace AuggitAPIServer.Controllers.SALES
         [Route("getDefaultAccounts")]
         public JsonResult getDefaultAccounts()
         {
-            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"RStatus\"='A' ";
+            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"RStatus\"='A' and \"GroupCode\"='LG0013' ";
             DataTable table = new DataTable();
 
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
@@ -238,7 +238,7 @@ namespace AuggitAPIServer.Controllers.SALES
 
         [HttpGet]
         [Route("getMaxInvno")]
-        public JsonResult getMaxInvno(string vchtype, string branch, string fycode, string fy, string prefix)
+        public JsonResult getMaxInvno(string vchtype, string branch, string fycode, string fy, string? prefix)
         {
             string invno = "";
             string invnoid = "";
@@ -304,6 +304,10 @@ namespace AuggitAPIServer.Controllers.SALES
             public string rounded { get; set; }
             public string saleref { get; set; }
             public string refno { get; set; }
+            public string contactpersonname { get; set; }
+            public string phoneno { get; set; }
+            public string termsandcondition { get; set; }
+            public string remarks { get; set; }
             public List<solistDetails> solistDetails { get; set; }
         }
 
@@ -500,9 +504,10 @@ namespace AuggitAPIServer.Controllers.SALES
         public JsonResult getPendingSOListDetails(string customercode)
         {
             string query = "select a.sono,a.sodate,a.customername,a.customercode,a.\"expDeliveryDate\", "
-                + " sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, \r\nsum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,salerefname,refno  from public.\"vSO\" "
-                + " a left outer join pending_sos b on a.sono=b.sono \r\nwhere a.customercode = '" + customercode + "'\r\ngroup by a.sono,a.sodate,a.customername,a.customercode, "
-                + " a.sodate,a.\"expDeliveryDate\",a.net,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,salerefname,refno HAVING((sum(b.ordered)-sum(b.received))>0);";
+                + " sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, \r\nsum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,salerefname,refno,contactpersonname,phoneno,termsandcondition,remarks  from public.\"vSO\" "
+                + " a left outer join pending_sos b on a.sono=b.sono \r\nwhere a.customercode = '" + customercode + "' and a.status=1 \r\ngroup by a.sono,a.sodate,a.customername,a.customercode, "
+                + " a.sodate,a.\"expDeliveryDate\",a.net,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,salerefname,refno,contactpersonname,phoneno,termsandcondition,remarks HAVING((sum(b.ordered)-sum(b.received))>0);";
+                Console.WriteLine(query);
             List<solist> polist = new List<solist>();
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
             DataTable dt = new DataTable();
@@ -528,6 +533,10 @@ namespace AuggitAPIServer.Controllers.SALES
                     rounded = dt.Rows[i][14].ToString(),
                     saleref = dt.Rows[i][15].ToString(),
                     refno = dt.Rows[i][16].ToString(),
+                    contactpersonname = dt.Rows[i][17].ToString(),
+                    phoneno = dt.Rows[i][18].ToString(),
+                    termsandcondition = dt.Rows[i][19].ToString(),
+                    remarks = dt.Rows[i][20].ToString(),
                     solistDetails = GetPendingSOListProductDetails(pono: dt.Rows[i][0].ToString())
                 };
                 polist.Add(pl);

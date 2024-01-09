@@ -148,7 +148,7 @@ namespace AuggitAPIServer.Controllers.SALES
         {
             string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"GroupCode\" ='LG0028' and \"RStatus\"='A' ";
             DataTable table = new DataTable();
-         
+
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
                 myCon.Open();
@@ -170,7 +170,7 @@ namespace AuggitAPIServer.Controllers.SALES
         {
             string query = "select * from public.\"mLedgers\" where \"GroupCode\" ='LG0032' and \"RStatus\"='A' ";
             DataTable table = new DataTable();
-            
+
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
                 myCon.Open();
@@ -190,9 +190,9 @@ namespace AuggitAPIServer.Controllers.SALES
         [Route("getDefaultAccounts")]
         public JsonResult getDefaultAccounts()
         {
-            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"RStatus\"='A' ";
+            string query = "select \"CompanyDisplayName\" ledgername,\"LedgerCode\" ledgercode from public.\"mLedgers\" where \"RStatus\"='A' and \"GroupCode\"='LG0013'";
             DataTable table = new DataTable();
-         
+
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
                 myCon.Open();
@@ -209,13 +209,12 @@ namespace AuggitAPIServer.Controllers.SALES
         }
 
         [HttpGet]
-        [Route("getMaxInvno")] 
+        [Route("getMaxInvno")]
         public JsonResult getMaxInvno(string vchtype, string branch, string fycode, string fy)
         {
             string invno = "";
             string invnoid = "";
-            string query = "SELECT MAX(ssid) FROM public.\"vSSales\" WHERE vchtype = @vchtype AND branch = @branch AND fy = @fycode";
-
+            string query = "SELECT MAX(ssid) FROM public.\"vSSales\" WHERE vchtype ='" + vchtype + "' AND branch = '" + branch + "' AND fy ='" + fycode + "'";
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
                 myCon.Open();
@@ -265,7 +264,7 @@ namespace AuggitAPIServer.Controllers.SALES
             public string tcs { get; set; }
             public string rounded { get; set; }
             public string branch { get; set; }
-            public string fy { get; set; }   
+            public string fy { get; set; }
             public List<solistDetailss> solistDetails { get; set; }
         }
 
@@ -316,7 +315,7 @@ namespace AuggitAPIServer.Controllers.SALES
             return new JsonResult(polist);
         }
 
-     
+
         [HttpGet]
         [Route("GetPendingSOListProductDetailsService")]
         public List<solistDetailss> GetPendingSOListProductDetailsService(string pono)
@@ -386,9 +385,9 @@ namespace AuggitAPIServer.Controllers.SALES
         public JsonResult getPendingSOListDetails(string customercode)
         {
             string query = "select a.sono,a.sodate,a.customername,a.customercode,a.\"expDeliveryDate\", "
-                + " sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, \r\nsum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,refno from public.\"vSSO\" "
-                + " a left outer join pending_ssos b on a.sono= b.sono \r\nwhere b.sono!='' and a.customercode = '" + customercode + "'\r\ngroup by a.sono,a.sodate,a.customername,a.customercode, "
-                + " a.sodate,a.\"expDeliveryDate\",a.net,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,refno HAVING((sum(b.ordered)-sum(b.received))>0);";
+                + " sum(b.ordervalue) Ordered_Value,sum(b.ordered) Ordered,sum(b.received) Received, \r\nsum(b.receivedvalue) Received_Value,sum(b.ordered)-sum(b.received) Pending,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,refno,contactpersonname,phoneno,termsandcondition,remarks from public.\"vSSO\" "
+                + " a left outer join pending_ssos b on a.sono= b.sono \r\nwhere b.sono!='' and a.customercode = '" + customercode + "' and a.status=1\r\ngroup by a.sono,a.sodate,a.customername,a.customercode, "
+                + " a.sodate,a.\"expDeliveryDate\",a.net,\"trRate\",\"pkRate\",\"inRate\",\"tcsRate\",roundedoff,refno,contactpersonname,phoneno,termsandcondition,remarks HAVING((sum(b.ordered)-sum(b.received))>0);";
             List<solist> polist = new List<solist>();
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, _context.Database.GetDbConnection().ConnectionString);
             DataTable dt = new DataTable();
@@ -412,7 +411,11 @@ namespace AuggitAPIServer.Controllers.SALES
                     ins = dt.Rows[i][12].ToString(),
                     tcs = dt.Rows[i][13].ToString(),
                     rounded = dt.Rows[i][14].ToString(),
-                    refno =dt.Rows[i][15].ToString(),
+                    refno = dt.Rows[i][15].ToString(),
+                    contactpersonname = dt.Rows[i][16].ToString(),
+                    phoneno = dt.Rows[i][17].ToString(),
+                    termsandcondition = dt.Rows[i][18].ToString(),
+                    remarks = dt.Rows[i][19].ToString(),
                     solistDetails = GetPendingSOListProductDetails(pono: dt.Rows[i][0].ToString())
                 };
                 polist.Add(pl);
@@ -478,7 +481,7 @@ namespace AuggitAPIServer.Controllers.SALES
             public string vchtype { get; set; }
             public string branch { get; set; }
             public string fy { get; set; }
-            
+
             public List<saleslistDetailss> saleslistDetails { get; set; }
         }
 
@@ -656,7 +659,7 @@ namespace AuggitAPIServer.Controllers.SALES
             }
             return new JsonResult(count);
         }
-      
+
 
         [HttpGet]
         [Route("deleteSales")]
@@ -702,7 +705,7 @@ namespace AuggitAPIServer.Controllers.SALES
         {
             string query = "select id,efieldname,efieldvalue from public.\"vSSalesCusFields\" where grnno='" + invno + "'";
             DataTable table = new DataTable();
-           
+
             using (NpgsqlConnection myCon = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
                 myCon.Open();

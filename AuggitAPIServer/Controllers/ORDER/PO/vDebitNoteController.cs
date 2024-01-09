@@ -87,7 +87,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
             }
 
             rtnData = Common.GetGraphData(globalFilterId, rtnData);
-            rtnData = Common.GetResultCount(_context,"vDR",rtnData);
+            rtnData = Common.GetResultCount(_context, "vDR", rtnData, queryCon);
 
             return new JsonResult(rtnData);
         }
@@ -96,7 +96,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getDN")]
         public JsonResult GetDN(string id)
         {
-            string query = $"SELECT s.vchno,s.vchdate,s.refno,s.purchasebillno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgsttotal\",s.\"sgsttotal\",s.\"igsttotal\",s.\"net\",s.contactpersonname,s.phoneno,s.branch,s.fy,s.discounttotal FROM public.\"vDR\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vDRDetails\" sd ON s.vchno = sd.vchno WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.vchno,s.vchdate,s.refno,s.purchasebillno,s.vendorcode,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.\"cgsttotal\",s.\"sgsttotal\",s.\"igsttotal\",s.\"net\",s.contactpersonname,s.phoneno,s.branch,s.fy,s.discounttotal, sd.uom, sd.productcode,item.itemcode, item.itemunder,item.itemcategory, itemgroup.groupcode, itemgroup.groupname, category.catcode, category.catname,s.roundedoff,s.tcsvalue,s.tcsrate FROM public.\"vDR\" s JOIN \"mLedgers\" v ON Cast(s.vendorcode as int) = v.\"LedgerCode\" JOIN \"vDRDetails\" sd ON s.vchno = sd.vchno LEFT JOIN \"mItem\" item ON (sd.productcode = item.itemcode::text) LEFT JOIN \"mItemgroup\" itemgroup ON (item.itemunder = itemgroup.groupcode) LEFT JOIN \"mCategory\" category ON (item.itemcategory = category.catcode) WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 
@@ -122,6 +122,9 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                 branch = dt.Rows[0][22].ToString(),
                 fy = dt.Rows[0][23].ToString(),
                 discount_total = dt.Rows[0][24].ToString(),
+                roundedoff = dt.Rows[0][34].ToString(),
+                tcsvalue = dt.Rows[0][35].ToString(),
+                tcsrate = dt.Rows[0][36].ToString(),
                 products = products
             };
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -135,6 +138,11 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                     rate = dt.Rows[i][13].ToString(),
                     total = dt.Rows[i][14].ToString(),
                     gstvalue = dt.Rows[i][15].ToString(),
+                    uom = dt.Rows[i][25].ToString(),
+                    itemUnderCode = dt.Rows[i][28].ToString(),
+                    itemCategoryCode = dt.Rows[i][29].ToString(),
+                    groupname = dt.Rows[i][31].ToString(),
+                    catname = dt.Rows[i][33].ToString(),
                 };
                 products.Add(product);
             }

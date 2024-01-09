@@ -86,7 +86,16 @@ namespace AuggitAPIServer.Controllers.PO
                 return NotFound();
             }
 
-            vSPO.status = status;
+            if (status == 1)
+            {
+                var sGRN = await _context.vSGrn.FirstOrDefaultAsync(x => x.pono == vSPO.pono);
+                if (sGRN != null)
+                {
+                    return BadRequest("The Service Purchase Order have Service GRN");
+                }
+            }
+
+            vSPO.status = status == 1 ? 3 : 1;
 
             try
             {

@@ -91,7 +91,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
             }
 
             rtnData = Common.GetGraphData(globalFilterId, rtnData);
-            rtnData = Common.GetResultCount(_context, "vSSales", rtnData);
+            rtnData = Common.GetResultCount(_context, "vSSales", rtnData, queryCon);
 
             return new JsonResult(rtnData);
         }
@@ -100,7 +100,7 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
         [Route("getServiceSales")]
         public JsonResult GetServiceSales(string id, bool cusFields)
         {
-            string query = $"SELECT s.sono,s.invdate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.invno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.remarks,s.termsandcondition {(cusFields ? ",c.efieldname,c.efieldvalue" : "")},s.\"discountTotal\" FROM public.\"vSSales\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSSalesDetails\" sd ON s.invno = sd.invno {(cusFields ? "LEFT JOIN \"vSSalesCusFields\" c on(c.grnno = s.invno)" : "")}  WHERE s.\"Id\" = '{id}'";
+            string query = $"SELECT s.sono,s.invdate,s.refno,s.customercode,s.deliveryaddress,v.\"CompanyDisplayName\",v.\"CompanyMobileNo\",v.\"GSTNo\",v.\"BilingAddress\",sd.product,sd.sku,sd.hsn,sd.qty,sd.rate,(sd.rate * sd.qty) AS total,sd.gstvalue,s.invno,s.\"cgstTotal\",s.\"sgstTotal\",s.\"igstTotal\",s.\"net\",s.\"expDeliveryDate\",sd.transport,s.contactpersonname,s.phoneno,s.remarks,s.termsandcondition {(cusFields ? ",c.efieldname,c.efieldvalue" : "")},s.\"discountTotal\", sd.uom, sd.productcode,item.itemcode, item.itemunder,item.itemcategory, itemgroup.groupcode, itemgroup.groupname, category.catcode, category.catname FROM public.\"vSSales\" s JOIN \"mLedgers\" v ON Cast(s.customercode as int) = v.\"LedgerCode\" JOIN \"vSSalesDetails\" sd ON s.invno = sd.invno {(cusFields ? "LEFT JOIN \"vSSalesCusFields\" c on(c.grnno = s.invno)" : "")} LEFT JOIN \"mItem\" item ON (sd.productcode = item.itemcode::text) LEFT JOIN \"mItemgroup\" itemgroup ON (item.itemunder = itemgroup.groupcode) LEFT JOIN \"mCategory\" category ON (item.itemcategory = category.catcode) WHERE s.\"Id\" = '{id}'";
 
             List<dynamic> products = new List<dynamic>();
 
@@ -143,6 +143,11 @@ namespace AuggitAPIServer.Controllers.ORDER.SO
                     total = dt.Rows[i][14].ToString(),
                     gstvalue = dt.Rows[i][15].ToString(),
                     transport = dt.Rows[i][22].ToString(),
+                    uom = dt.Rows[i][28].ToString(),
+                    itemUnderCode = dt.Rows[i][31].ToString(),
+                    itemCategoryCode = dt.Rows[i][32].ToString(),
+                    groupname = dt.Rows[i][34].ToString(),
+                    catname = dt.Rows[i][36].ToString(),
                 };
                 products.Add(product);
             }
