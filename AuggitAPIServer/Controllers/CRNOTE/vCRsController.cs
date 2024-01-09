@@ -579,7 +579,7 @@ namespace AuggitAPIServer.Controllers.CRNOTE
                     net = dt.Rows[i][18].ToString(),
                     termsandcondition = dt.Rows[i][19].ToString(),
                     remarks = dt.Rows[i][20].ToString(),
-                    saleslistDetails = GetPendingSalesListProductDetails(vchno: dt.Rows[i][0].ToString())
+                    saleslistDetails = GetPendingSSalesListProductDetails(vchno: dt.Rows[i][0].ToString())
                 };
                 crlist.Add(pl);
             }
